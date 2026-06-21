@@ -355,15 +355,28 @@ function openDetail(index) {
     
     if (isAbc) {
         document.getElementById('detailLetter').textContent = `${item.letter}${item.letter.toLowerCase()}`;
-        document.getElementById('detailEmoji').textContent = langData.emoji;
+        const detailEmoji = document.getElementById('detailEmoji');
+        detailEmoji.className = 'detail-emoji';
+        detailEmoji.innerHTML = langData.emoji;
         document.getElementById('detailWord').textContent = langData.word;
     } else if (is123) {
         document.getElementById('detailLetter').textContent = item.number;
-        document.getElementById('detailEmoji').textContent = `${langData.hand} ${langData.countEmoji}`;
+        const detailEmoji = document.getElementById('detailEmoji');
+        detailEmoji.className = 'detail-emoji num-mode';
+        
+        // Asingkan isyarat tangan dan ikon kiraan nombor dalam bentuk grid
+        const countItemsHtml = Array.from(langData.countEmoji).map(char => `<span class="count-item">${char}</span>`).join('');
+        detailEmoji.innerHTML = `
+            <div class="num-hand">${langData.hand}</div>
+            <div class="num-count-grid">${countItemsHtml}</div>
+        `;
+        
         document.getElementById('detailWord').textContent = langData.word;
     } else if (isJawi) {
         document.getElementById('detailLetter').textContent = item.letter;
-        document.getElementById('detailEmoji').textContent = langData.emoji;
+        const detailEmoji = document.getElementById('detailEmoji');
+        detailEmoji.className = 'detail-emoji';
+        detailEmoji.innerHTML = langData.emoji;
         document.getElementById('detailWord').textContent = `${item.name} (${langData.word})`;
     }
     
