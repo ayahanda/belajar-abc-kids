@@ -1,0 +1,12 @@
+node_modules/
+.gradle/
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+*.apk
+*.zip
+test_extract/
+test_zip_extract/
+.DS_Store
+Thumbs.db
