@@ -689,15 +689,31 @@ function generateQuizQuestion() {
     const txtQuestion = document.getElementById('quizQuestionText');
 
     if (isAbc) {
-        quizCorrectLetter = correctItem.letter;
+        // Rawak 50% untuk soalan huruf kecil
+        const isLowercaseQuestion = Math.random() < 0.5;
         
-        // Sediakan teks soalan
-        if (currentLanguage === 'ms') {
-            txtQuestion.textContent = `Di mana huruf ${quizCorrectLetter}?`;
-            quizQuestionVoiceText = `Di mana huruf ${quizCorrectLetter}?`;
+        if (isLowercaseQuestion) {
+            quizCorrectLetter = correctItem.letter.toLowerCase();
+            
+            // Sediakan teks soalan huruf kecil
+            if (currentLanguage === 'ms') {
+                txtQuestion.textContent = `Mana huruf kecil ${quizCorrectLetter}?`;
+                quizQuestionVoiceText = `Mana huruf kecil ${quizCorrectLetter}?`;
+            } else {
+                txtQuestion.textContent = `Where is the lowercase letter ${quizCorrectLetter}?`;
+                quizQuestionVoiceText = `Where is the lowercase letter ${quizCorrectLetter}?`;
+            }
         } else {
-            txtQuestion.textContent = `Where is the letter ${quizCorrectLetter}?`;
-            quizQuestionVoiceText = `Where is the letter ${quizCorrectLetter}?`;
+            quizCorrectLetter = correctItem.letter;
+            
+            // Sediakan teks soalan huruf besar
+            if (currentLanguage === 'ms') {
+                txtQuestion.textContent = `Di mana huruf ${quizCorrectLetter}?`;
+                quizQuestionVoiceText = `Di mana huruf ${quizCorrectLetter}?`;
+            } else {
+                txtQuestion.textContent = `Where is the letter ${quizCorrectLetter}?`;
+                quizQuestionVoiceText = `Where is the letter ${quizCorrectLetter}?`;
+            }
         }
     } else if (is123) {
         quizCorrectLetter = correctItem.number;
@@ -727,9 +743,18 @@ function generateQuizQuestion() {
 
     // Bina senarai pilihan jawapan (1 betul, 3 salah rawak)
     const options = [quizCorrectLetter];
+    const isLowercase = isAbc && (quizCorrectLetter === quizCorrectLetter.toLowerCase());
     while (options.length < 4) {
         const randomIdx = Math.floor(Math.random() * data.length);
-        const randomVal = isAbc ? data[randomIdx].letter : (is123 ? data[randomIdx].number : data[randomIdx].letter);
+        let randomVal;
+        if (isAbc) {
+            randomVal = isLowercase ? data[randomIdx].letter.toLowerCase() : data[randomIdx].letter;
+        } else if (is123) {
+            randomVal = data[randomIdx].number;
+        } else {
+            randomVal = data[randomIdx].letter;
+        }
+        
         if (!options.includes(randomVal)) {
             options.push(randomVal);
         }
