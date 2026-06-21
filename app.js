@@ -38,6 +38,7 @@ let currentLetterIdx = 0;
 let quizScore = 0;
 let quizCorrectLetter = '';
 let quizQuestionVoiceText = '';
+let currentQuizMode = 'upper';
 let voices = [];
 let audioCtx = null;
 
@@ -677,6 +678,11 @@ function generateQuizQuestion() {
     const is123 = currentCategory === '123';
     const isJawi = currentCategory === 'jawi';
     
+    const selector = document.getElementById('quizModeSelector');
+    if (selector) {
+        selector.style.display = isAbc ? 'flex' : 'none';
+    }
+
     let data;
     if (isAbc) data = abcData;
     else if (is123) data = numberData;
@@ -689,8 +695,7 @@ function generateQuizQuestion() {
     const txtQuestion = document.getElementById('quizQuestionText');
 
     if (isAbc) {
-        // Rawak 50% untuk soalan huruf kecil
-        const isLowercaseQuestion = Math.random() < 0.5;
+        const isLowercaseQuestion = currentQuizMode === 'lower';
         
         if (isLowercaseQuestion) {
             quizCorrectLetter = correctItem.letter.toLowerCase();
@@ -1192,4 +1197,18 @@ function updateStaticTranslations() {
             el.innerHTML = el.innerHTML.replace(el.textContent.trim(), text);
         }
     });
+}
+
+// Tukar mod kuiz (Huruf Besar / Huruf Kecil)
+function setQuizMode(mode) {
+    if (currentQuizMode === mode) return;
+    currentQuizMode = mode;
+    playSynthSound('click');
+
+    // Kemas kini butang aktif
+    document.getElementById('btnQuizUpper').classList.toggle('active', mode === 'upper');
+    document.getElementById('btnQuizLower').classList.toggle('active', mode === 'lower');
+
+    // Reset kuiz dengan skor 0
+    resetQuiz();
 }

@@ -109,6 +109,16 @@
             <!-- ================= TAB 2: KUIZ ABC ================= -->
             <section id="tabContentQuiz" class="tab-content">
                 <div class="quiz-container">
+                    <!-- Pemilih Mod Kuiz (Hanya untuk ABC) -->
+                    <div class="quiz-mode-selector" id="quizModeSelector">
+                        <button id="btnQuizUpper" class="quiz-mode-btn active" onclick="setQuizMode('upper')">
+                            <span data-ms="🔠 Huruf Besar" data-en="🔠 Uppercase">🔠 Huruf Besar</span>
+                        </button>
+                        <button id="btnQuizLower" class="quiz-mode-btn" onclick="setQuizMode('lower')">
+                            <span data-ms="🔡 Huruf Kecil" data-en="🔡 Lowercase">🔡 Huruf Kecil</span>
+                        </button>
+                    </div>
+
                     <!-- Skor & Bintang -->
                     <div class="quiz-scorebar">
                         <div class="score-stars" id="scoreStars">
