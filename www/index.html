@@ -135,10 +135,12 @@
                     </div>
 
                     <!-- Soalan -->
-                    <div class="quiz-card">
-                        <div class="quiz-question-sound" onclick="playQuestionSpeech()" title="Dengar sebutan soalan">
-                            <span class="sound-wave">🔊</span>
-                            <h2 id="quizQuestionText" data-ms="Di mana huruf A?" data-en="Where is the letter A?">Di mana huruf A?</h2>
+                    <div class="quiz-card" id="quizCard">
+                        <div id="quizQuestionArea">
+                            <div class="quiz-question-sound" onclick="playQuestionSpeech()" title="Dengar sebutan soalan">
+                                <span class="sound-wave">🔊</span>
+                                <h2 id="quizQuestionText" data-ms="Di mana huruf A?" data-en="Where is the letter A?">Di mana huruf A?</h2>
+                            </div>
                         </div>
                         
                         <div class="quiz-options" id="quizOptions">
@@ -148,6 +150,12 @@
                             <button class="option-btn">C</button>
                             <button class="option-btn">D</button>
                         </div>
+                    </div>
+
+                    <!-- Info Kuiz Bawah (Hanya untuk Huruf Kecil ABC) -->
+                    <div class="quiz-footer-info" id="quizFooterInfo" style="display: none;">
+                        <h3 class="footer-title" data-ms="MANA HURUF KECIL?" data-en="WHERE IS THE LOWERCASE?">MANA HURUF KECIL?</h3>
+                        <p class="footer-subtitle" data-ms="Uji mata kamu! Cari huruf kecil yang betul" data-en="Test your eyes! Find the correct lowercase letter">Uji mata kamu! Cari huruf kecil yang betul</p>
                     </div>
 
                     <!-- Maklum Balas Khas Kuiz -->

@@ -692,57 +692,79 @@ function generateQuizQuestion() {
     const correctIdx = Math.floor(Math.random() * data.length);
     const correctItem = data[correctIdx];
     
-    const txtQuestion = document.getElementById('quizQuestionText');
+    const isLowercaseQuestion = isAbc && currentQuizMode === 'lower';
+    const quizCard = document.getElementById('quizCard');
+    const quizQuestionArea = document.getElementById('quizQuestionArea');
+    const quizFooterInfo = document.getElementById('quizFooterInfo');
 
-    if (isAbc) {
-        const isLowercaseQuestion = currentQuizMode === 'lower';
+    if (isLowercaseQuestion) {
+        if (quizCard) quizCard.classList.add('lowercase-quiz');
+        if (quizFooterInfo) quizFooterInfo.style.display = 'block';
         
-        if (isLowercaseQuestion) {
-            quizCorrectLetter = correctItem.letter.toLowerCase();
-            
-            // Sediakan teks soalan huruf kecil
-            if (currentLanguage === 'ms') {
-                txtQuestion.textContent = `Mana huruf kecil ${quizCorrectLetter}?`;
-                quizQuestionVoiceText = `Mana huruf kecil ${quizCorrectLetter}?`;
-            } else {
-                txtQuestion.textContent = `Where is the lowercase letter ${quizCorrectLetter}?`;
-                quizQuestionVoiceText = `Where is the lowercase letter ${quizCorrectLetter}?`;
-            }
+        quizCorrectLetter = correctItem.letter.toLowerCase();
+        
+        const instructionText = currentLanguage === 'ms' ? 'Klik huruf kecil untuk:' : 'Click lowercase letter for:';
+        if (quizQuestionArea) {
+            quizQuestionArea.innerHTML = `
+                <div class="quiz-match-wrapper">
+                    <button class="quiz-sound-btn-round" onclick="playQuestionSpeech()" title="Dengar sebutan soalan">🔊</button>
+                    <div class="quiz-match-card">
+                        <div class="quiz-match-instruction">${instructionText}</div>
+                        <div class="quiz-match-letter">${correctItem.letter}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (currentLanguage === 'ms') {
+            quizQuestionVoiceText = `Mana huruf kecil ${quizCorrectLetter}?`;
         } else {
+            quizQuestionVoiceText = `Where is the lowercase letter ${quizCorrectLetter}?`;
+        }
+    } else {
+        if (quizCard) quizCard.classList.remove('lowercase-quiz');
+        if (quizFooterInfo) quizFooterInfo.style.display = 'none';
+        
+        if (quizQuestionArea) {
+            quizQuestionArea.innerHTML = `
+                <div class="quiz-question-sound" onclick="playQuestionSpeech()" title="Dengar sebutan soalan">
+                    <span class="sound-wave">🔊</span>
+                    <h2 id="quizQuestionText"></h2>
+                </div>
+            `;
+        }
+        
+        const txtQuestion = document.getElementById('quizQuestionText');
+        
+        if (isAbc) {
             quizCorrectLetter = correctItem.letter;
-            
-            // Sediakan teks soalan huruf besar
             if (currentLanguage === 'ms') {
-                txtQuestion.textContent = `Di mana huruf ${quizCorrectLetter}?`;
+                if (txtQuestion) txtQuestion.textContent = `Di mana huruf ${quizCorrectLetter}?`;
                 quizQuestionVoiceText = `Di mana huruf ${quizCorrectLetter}?`;
             } else {
-                txtQuestion.textContent = `Where is the letter ${quizCorrectLetter}?`;
+                if (txtQuestion) txtQuestion.textContent = `Where is the letter ${quizCorrectLetter}?`;
                 quizQuestionVoiceText = `Where is the letter ${quizCorrectLetter}?`;
             }
-        }
-    } else if (is123) {
-        quizCorrectLetter = correctItem.number;
-        
-        // Sediakan teks soalan
-        if (currentLanguage === 'ms') {
-            const numberWord = numberWords.ms[parseInt(quizCorrectLetter) - 1];
-            txtQuestion.textContent = `Di mana nombor ${numberWord}?`;
-            quizQuestionVoiceText = `Di mana nombor ${numberWord}?`;
-        } else {
-            txtQuestion.textContent = `Where is the number ${quizCorrectLetter}?`;
-            quizQuestionVoiceText = `Where is the number ${quizCorrectLetter}?`;
-        }
-    } else if (isJawi) {
-        quizCorrectLetter = correctItem.letter;
-        const letterName = correctItem.name;
-        
-        // Sediakan teks soalan
-        if (currentLanguage === 'ms') {
-            txtQuestion.textContent = `Di mana huruf ${letterName}?`;
-            quizQuestionVoiceText = `Di mana huruf ${letterName}?`;
-        } else {
-            txtQuestion.textContent = `Where is the letter ${letterName}?`;
-            quizQuestionVoiceText = `Where is the letter ${letterName}?`;
+        } else if (is123) {
+            quizCorrectLetter = correctItem.number;
+            if (currentLanguage === 'ms') {
+                const numberWord = numberWords.ms[parseInt(quizCorrectLetter) - 1];
+                if (txtQuestion) txtQuestion.textContent = `Di mana nombor ${numberWord}?`;
+                quizQuestionVoiceText = `Di mana nombor ${numberWord}?`;
+            } else {
+                if (txtQuestion) txtQuestion.textContent = `Where is the number ${quizCorrectLetter}?`;
+                quizQuestionVoiceText = `Where is the number ${quizCorrectLetter}?`;
+            }
+        } else if (isJawi) {
+            quizCorrectLetter = correctItem.letter;
+            const letterName = correctItem.name;
+            if (currentLanguage === 'ms') {
+                if (txtQuestion) txtQuestion.textContent = `Di mana huruf ${letterName}?`;
+                quizQuestionVoiceText = `Di mana huruf ${letterName}?`;
+            } else {
+                if (txtQuestion) txtQuestion.textContent = `Where is the letter ${letterName}?`;
+                quizQuestionVoiceText = `Where is the letter ${letterName}?`;
+            }
         }
     }
 

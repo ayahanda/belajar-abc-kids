@@ -869,6 +869,108 @@ body {
     gap: 16px;
 }
 
+/* Reka Bentuk Kuiz Padanan Huruf Kecil (Interaktif) */
+.lowercase-quiz {
+    background-color: #e8f5e9 !important; /* Latar belakang hijau cair comel */
+    border: 6px solid #a5d6a7 !important;
+    padding: 24px 20px 20px 20px !important;
+}
+
+.quiz-match-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.quiz-sound-btn-round {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 3px solid #a5d6a7;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    z-index: 10;
+}
+
+.quiz-sound-btn-round:active {
+    transform: scale(0.9);
+}
+
+.quiz-match-card {
+    background-color: #ffffff;
+    border-radius: 28px;
+    width: 100%;
+    max-width: 280px;
+    padding: 22px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    border: 3px solid #e8f5e9;
+}
+
+.quiz-match-instruction {
+    font-size: 13px;
+    color: #90a4ae;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.quiz-match-letter {
+    font-size: 80px;
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1;
+}
+
+/* Susunan Butang Jawapan Khas Mod Huruf Kecil (Lurus 4 Butang) */
+.lowercase-quiz .quiz-options {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+}
+
+.lowercase-quiz .option-btn {
+    aspect-ratio: 1 !important;
+    height: unset !important;
+    border-radius: 20px !important;
+    font-size: 32px !important;
+    padding: 8px !important;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.05) !important;
+}
+
+/* Info Banner Bawah */
+.quiz-footer-info {
+    text-align: center;
+    margin-top: 24px;
+    padding: 12px;
+    width: 100%;
+}
+
+.quiz-footer-info .footer-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #ff5a5f;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.quiz-footer-info .footer-subtitle {
+    font-size: 13px;
+    color: #5a6a7f;
+    font-weight: 600;
+}
+
 .option-btn {
     font-family: var(--font-primary);
     font-size: 44px;
