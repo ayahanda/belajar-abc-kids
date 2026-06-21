@@ -21,204 +21,238 @@
     <div class="bubble-bg" id="bubbleBg"></div>
 
     <div class="app-container">
-        <!-- Header Utama -->
-        <header class="app-header">
-            <div class="header-content">
-                <div class="title-logo">
-                    <span class="logo-emoji">🎨</span>
-                    <h1 id="appHeaderTitle">Belajar <span class="colored-text">A</span><span class="colored-text">B</span><span class="colored-text">C</span></h1>
-                </div>
-                
-                <div class="settings-panel">
-                    <!-- Penukar Bahasa -->
-                    <div class="language-selector">
-                        <button id="btnLangMs" class="lang-btn active" onclick="setLanguage('ms')">🇲🇾 BM</button>
-                        <button id="btnLangEn" class="lang-btn" onclick="setLanguage('en')">🇬🇧 EN</button>
+        <!-- SCREEN 1: MENU UTAMA -->
+        <div id="screenMainMenu" class="app-screen">
+            <!-- Header Utama (Hanya ada di Screen 1) -->
+            <header class="app-header">
+                <div class="header-content">
+                    <div class="title-logo">
+                        <span class="logo-emoji">🎨</span>
+                        <h1 id="appHeaderTitle">Belajar <span class="colored-text">A</span><span class="colored-text">B</span><span class="colored-text">C</span></h1>
                     </div>
+                    
+                    <div class="settings-panel">
+                        <!-- Penukar Bahasa -->
+                        <div class="language-selector">
+                            <button id="btnLangMs" class="lang-btn active" onclick="setLanguage('ms')">🇲🇾 BM</button>
+                            <button id="btnLangEn" class="lang-btn" onclick="setLanguage('en')">🇬🇧 EN</button>
+                        </div>
 
-                    <!-- Butang Suara -->
-                    <button id="btnMute" class="icon-btn" onclick="toggleMute()" title="Senyapkan Suara">
-                        <span class="icon-emoji" id="muteIcon">🔊</span>
+                        <!-- Butang Suara -->
+                        <button id="btnMute" class="icon-btn" onclick="toggleMute()" title="Senyapkan Suara">
+                            <span class="icon-emoji" id="muteIcon">🔊</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="menu-main">
+                <div class="menu-instructions">
+                    <p data-ms="Pilih satu aktiviti yang menyeronokkan!" data-en="Choose a fun activity!">Pilih satu aktiviti yang menyeronokkan!</p>
+                </div>
+                <div class="menu-grid">
+                    <!-- Belajar -->
+                    <button class="menu-card card-learn" onclick="selectActivity('learn')">
+                        <span class="menu-card-icon">📚</span>
+                        <span class="menu-card-title" data-ms="Belajar" data-en="Learn">Belajar</span>
+                        <span class="menu-card-desc" data-ms="Kenali huruf, nombor & bunyi comel" data-en="Learn letters, numbers & cute sounds">Kenali huruf, nombor & bunyi comel</span>
+                    </button>
+                    <!-- Kuiz -->
+                    <button class="menu-card card-quiz" onclick="selectActivity('quiz')">
+                        <span class="menu-card-icon">🎮</span>
+                        <span class="menu-card-title" data-ms="Kuiz / Latihan" data-en="Quiz / Practice">Kuiz / Latihan</span>
+                        <span class="menu-card-desc" data-ms="Uji pemahaman dengan permainan menyeronokkan" data-en="Test your knowledge with fun games">Uji pemahaman dengan permainan menyeronokkan</span>
+                    </button>
+                    <!-- Melukis -->
+                    <button class="menu-card card-trace" onclick="selectActivity('trace')">
+                        <span class="menu-card-icon">✍️</span>
+                        <span class="menu-card-title" data-ms="Melukis" data-en="Drawing">Melukis</span>
+                        <span class="menu-card-desc" data-ms="Lakar huruf & nombor mengikut panduan" data-en="Trace letters & numbers with guidelines">Lakar huruf & nombor mengikut panduan</span>
                     </button>
                 </div>
-            </div>
-        </header>
-
-        <!-- Suis Kategori Utama (ABC vs 123 vs Jawi) -->
-        <div class="category-switcher">
-            <button id="btnCatAbc" class="cat-btn active" onclick="setCategory('abc')">
-                <span class="cat-icon">
-                    <img src="assets/images/icon_abc.png" alt="Belajar ABC" class="category-icon-img">
-                </span>
-                <span class="cat-text" data-ms="Belajar ABC" data-en="Learn ABC">Belajar ABC</span>
-            </button>
-            <button id="btnCat123" class="cat-btn" onclick="setCategory('123')">
-                <span class="cat-icon">
-                    <img src="assets/images/icon_123.png" alt="Belajar 123" class="category-icon-img">
-                </span>
-                <span class="cat-text" data-ms="Belajar 123" data-en="Learn 123">Belajar 123</span>
-            </button>
-            <button id="btnCatJawi" class="cat-btn" onclick="setCategory('jawi')">
-                <span class="cat-icon">
-                    <img src="assets/images/icon_jawi.png" alt="Alif Ba Ta" class="category-icon-img">
-                </span>
-                <span class="cat-text" data-ms="Alif Ba Ta" data-en="Alif Ba Ta">Alif Ba Ta</span>
-            </button>
+            </main>
         </div>
 
-        <!-- Navigasi Mod Permainan -->
-        <nav class="app-nav">
-            <button id="navLearn" class="nav-tab active" onclick="switchTab('learn')">
-                <span class="nav-icon">📚</span>
-                <span class="nav-text" data-ms="Belajar" data-en="Learn">Belajar</span>
-            </button>
-            <button id="navQuiz" class="nav-tab" onclick="switchTab('quiz')">
-                <span class="nav-icon">🎮</span>
-                <span class="nav-text" id="navTextQuiz" data-ms="Kuiz" data-en="Quiz">Kuiz</span>
-            </button>
-            <button id="navTrace" class="nav-tab" onclick="switchTab('trace')">
-                <span class="nav-icon">✍️</span>
-                <span class="nav-text" data-ms="Melakar" data-en="Tracing">Melakar</span>
-            </button>
-        </nav>
-
-        <!-- Kandungan Utama (Mengikut Tab) -->
-        <main class="app-main">
-            
-            <!-- ================= TAB 1: BELAJAR ABC ================= -->
-            <section id="tabContentLearn" class="tab-content active">
-                <div class="instructions">
-                    <p data-ms="Tekan huruf untuk mendengar sebutan comel!" data-en="Tap a letter to hear its lovely sound!">Tekan huruf untuk mendengar sebutan comel!</p>
+        <!-- SCREEN 2: PEMILIH KATEGORI -->
+        <div id="screenCategoryMenu" class="app-screen" style="display: none;">
+            <header class="app-header sub-header">
+                <div class="header-content">
+                    <button class="nav-back-btn" onclick="goHome()" title="Kembali ke Menu Utama">🏠 Home</button>
+                    <h2 class="sub-header-title" id="categoryMenuTitle" data-ms="Pilih Kategori" data-en="Choose Category">Pilih Kategori</h2>
+                    <div style="width: 70px;"></div> <!-- Spacer to center the title -->
                 </div>
+            </header>
 
-                <!-- Pemilih Mod Sebutan Belajar -->
-                <div class="learn-mode-selector">
-                    <button id="btnVoiceLetter" class="learn-mode-btn active" onclick="setLearnVoiceMode('letter')">
-                        <span data-ms="🔠 Sebut Huruf (A)" data-en="🔠 Say Letter (A)">🔠 Sebut Huruf (A)</span>
+            <main class="menu-main">
+                <div class="menu-instructions">
+                    <p data-ms="Pilih apa yang kamu mahu main!" data-en="Select what you want to play!">Pilih apa yang kamu mahu main!</p>
+                </div>
+                <div class="category-grid">
+                    <!-- ABC -->
+                    <button class="category-card card-abc" onclick="selectCategory('abc')">
+                        <img src="assets/images/icon_abc.png" alt="Belajar ABC" class="category-card-img">
+                        <span class="category-card-title" data-ms="Belajar ABC" data-en="Learn ABC">Belajar ABC</span>
                     </button>
-                    <button id="btnVoiceWord" class="learn-mode-btn" onclick="setLearnVoiceMode('word')">
-                        <span data-ms="🐔 Huruf & Perkataan" data-en="🐔 Letter & Word">🐔 Huruf & Perkataan</span>
+                    <!-- 123 -->
+                    <button class="category-card card-123" onclick="selectCategory('123')">
+                        <img src="assets/images/icon_123.png" alt="Belajar 123" class="category-card-img">
+                        <span class="category-card-title" data-ms="Belajar 123" data-en="Learn 123">Belajar 123</span>
+                    </button>
+                    <!-- Jawi -->
+                    <button class="category-card card-jawi" onclick="selectCategory('jawi')">
+                        <img src="assets/images/icon_jawi.png" alt="Alif Ba Ta" class="category-card-img">
+                        <span class="category-card-title" data-ms="Alif Ba Ta" data-en="Alif Ba Ta">Alif Ba Ta</span>
                     </button>
                 </div>
+            </main>
+        </div>
+
+        <!-- SCREEN 3: KANDUNGAN GAMEPLAY -->
+        <div id="screenGameplay" class="app-screen" style="display: none;">
+            <header class="app-header sub-header">
+                <div class="header-content">
+                    <button class="nav-back-btn" onclick="goBackToCategory()" title="Kembali ke Kategori">⬅ Back</button>
+                    <h2 class="sub-header-title" id="gameplayTitle">Belajar ABC</h2>
+                    <button class="nav-home-btn" onclick="goHome()" title="Kembali ke Menu Utama">🏠 Home</button>
+                </div>
+            </header>
+
+            <!-- Kandungan Utama (Mengikut Tab) -->
+            <main class="app-main gameplay-main">
                 
-                <div class="abc-grid" id="abcGrid">
-                    <!-- Kad A-Z akan dijana secara dinamik melalui JS -->
-                </div>
-            </section>
+                <!-- ================= TAB 1: BELAJAR ABC/123/JAWI ================= -->
+                <section id="tabContentLearn" class="tab-content">
+                    <div class="instructions">
+                        <p data-ms="Tekan huruf untuk mendengar sebutan comel!" data-en="Tap a letter to hear its lovely sound!">Tekan huruf untuk mendengar sebutan comel!</p>
+                    </div>
 
-            <!-- ================= TAB 2: KUIZ ABC ================= -->
-            <section id="tabContentQuiz" class="tab-content">
-                <div class="quiz-container">
-                    <!-- Pemilih Mod Kuiz (Hanya untuk ABC) -->
-                    <div class="quiz-mode-selector" id="quizModeSelector">
-                        <button id="btnQuizUpper" class="quiz-mode-btn active" onclick="setQuizMode('upper')">
-                            <span data-ms="🔠 Huruf Besar" data-en="🔠 Uppercase">🔠 Huruf Besar</span>
+                    <!-- Pemilih Mod Sebutan Belajar -->
+                    <div class="learn-mode-selector" id="learnModeSelectorContainer">
+                        <button id="btnVoiceLetter" class="learn-mode-btn active" onclick="setLearnVoiceMode('letter')">
+                            <span data-ms="🔠 Sebut Huruf (A)" data-en="🔠 Say Letter (A)">🔠 Sebut Huruf (A)</span>
                         </button>
-                        <button id="btnQuizLower" class="quiz-mode-btn" onclick="setQuizMode('lower')">
-                            <span data-ms="🔡 Huruf Kecil" data-en="🔡 Lowercase">🔡 Huruf Kecil</span>
+                        <button id="btnVoiceWord" class="learn-mode-btn" onclick="setLearnVoiceMode('word')">
+                            <span data-ms="🐔 Huruf & Perkataan" data-en="🐔 Letter & Word">🐔 Huruf & Perkataan</span>
                         </button>
                     </div>
-
-                    <!-- Skor & Bintang -->
-                    <div class="quiz-scorebar">
-                        <div class="score-stars" id="scoreStars">
-                            <!-- Bintang akan ditambah bila jawapan betul -->
-                            ⭐⭐⭐
-                        </div>
-                        <div class="score-text">
-                            <span data-ms="Skor:" data-en="Score:">Skor:</span> 
-                            <strong id="quizScore">0</strong>
-                        </div>
-                        <button class="reset-btn" onclick="resetQuiz()">
-                            <span data-ms="Mula Semula" data-en="Restart">Mula Semula</span> 🔄
-                        </button>
+                    
+                    <div class="abc-grid" id="abcGrid">
+                        <!-- Kad A-Z akan dijana secara dinamik melalui JS -->
                     </div>
+                </section>
 
-                    <!-- Soalan -->
-                    <div class="quiz-card" id="quizCard">
-                        <div id="quizQuestionArea">
-                            <div class="quiz-question-sound" onclick="playQuestionSpeech()" title="Dengar sebutan soalan">
-                                <span class="sound-wave">🔊</span>
-                                <h2 id="quizQuestionText" data-ms="Di mana huruf A?" data-en="Where is the letter A?">Di mana huruf A?</h2>
-                            </div>
-                        </div>
-                        
-                        <div class="quiz-options" id="quizOptions">
-                            <!-- Pilihan Jawapan A-D dijana oleh JS -->
-                            <button class="option-btn">A</button>
-                            <button class="option-btn">B</button>
-                            <button class="option-btn">C</button>
-                            <button class="option-btn">D</button>
-                        </div>
-                    </div>
-
-                    <!-- Info Kuiz Bawah (Hanya untuk Huruf Kecil ABC) -->
-                    <div class="quiz-footer-info" id="quizFooterInfo" style="display: none;">
-                        <h3 class="footer-title" data-ms="MANA HURUF KECIL?" data-en="WHERE IS THE LOWERCASE?">MANA HURUF KECIL?</h3>
-                        <p class="footer-subtitle" data-ms="Uji mata kamu! Cari huruf kecil yang betul" data-en="Test your eyes! Find the correct lowercase letter">Uji mata kamu! Cari huruf kecil yang betul</p>
-                    </div>
-
-                    <!-- Maklum Balas Khas Kuiz -->
-                    <div class="quiz-feedback" id="quizFeedback">
-                        <div class="feedback-content">
-                            <span class="feedback-emoji" id="feedbackEmoji">🌟</span>
-                            <h3 id="feedbackText">Hebat!</h3>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ================= TAB 3: MELAKAR HURUF ================= -->
-            <section id="tabContentTrace" class="tab-content">
-                <div class="trace-container">
-                    <div class="trace-sidebar">
-                        <div class="trace-instructions">
-                            <p data-ms="Pilih huruf dan lakarkan di atas papan!" data-en="Choose a letter and trace it on the board!">Pilih huruf dan lakarkan di atas papan!</p>
-                        </div>
-
-                        <!-- Pilih Huruf untuk Dilakar -->
-                        <div class="trace-letter-selector">
-                            <label for="traceLetterSelect" data-ms="Pilih Huruf:" data-en="Select Letter:">Pilih Huruf:</label>
-                            <select id="traceLetterSelect" onchange="changeTraceLetter()">
-                                <!-- Dijana oleh JS -->
-                            </select>
-                        </div>
-
-                        <!-- Alat Lukisan -->
-                        <div class="trace-tools">
-                            <h4 data-ms="Pilihan Warna" data-en="Colors">Pilihan Warna</h4>
-                            <div class="color-palette">
-                                <button class="color-btn active" style="background-color: #FF5A5F;" onclick="setStrokeColor('#FF5A5F', this)"></button>
-                                <button class="color-btn" style="background-color: #3F88C5;" onclick="setStrokeColor('#3F88C5', this)"></button>
-                                <button class="color-btn" style="background-color: #13B278;" onclick="setStrokeColor('#13B278', this)"></button>
-                                <button class="color-btn" style="background-color: #E2B43C;" onclick="setStrokeColor('#E2B43C', this)"></button>
-                                <button class="color-btn" style="background-color: #9B5DE5;" onclick="setStrokeColor('#9B5DE5', this)"></button>
-                                <button class="color-btn" style="background-color: #F15BB5;" onclick="setStrokeColor('#F15BB5', this)"></button>
-                                <button class="color-btn eraser" onclick="setStrokeColor('#FFFFFF', this, true)" title="Pemadam">🧽</button>
-                            </div>
-
-                            <div class="brush-size-control">
-                                <label for="brushSize" data-ms="Saiz Berus:" data-en="Brush Size:">Saiz Berus:</label>
-                                <input type="range" id="brushSize" min="10" max="40" value="20" onchange="updateBrushSize(this.value)">
-                            </div>
-
-                            <button class="clear-btn" onclick="clearCanvas()">
-                                <span data-ms="Padam Semua" data-en="Clear All">Padam Semua</span> 🧹
+                <!-- ================= TAB 2: KUIZ ABC/123/JAWI ================= -->
+                <section id="tabContentQuiz" class="tab-content">
+                    <div class="quiz-container">
+                        <!-- Pemilih Mod Kuiz (Hanya untuk ABC) -->
+                        <div class="quiz-mode-selector" id="quizModeSelector">
+                            <button id="btnQuizUpper" class="quiz-mode-btn active" onclick="setQuizMode('upper')">
+                                <span data-ms="🔠 Huruf Besar" data-en="🔠 Uppercase">🔠 Huruf Besar</span>
+                            </button>
+                            <button id="btnQuizLower" class="quiz-mode-btn" onclick="setQuizMode('lower')">
+                                <span data-ms="🔡 Huruf Kecil" data-en="🔡 Lowercase">🔡 Huruf Kecil</span>
                             </button>
                         </div>
-                    </div>
 
-                    <!-- Kawasan Kanvas Lukisan -->
-                    <div class="canvas-wrapper">
-                        <!-- Tanda Panduan Latar Belakang -->
-                        <div class="canvas-bg-letter" id="canvasBgLetter">A</div>
-                        <canvas id="traceCanvas" width="500" height="500"></canvas>
-                    </div>
-                </div>
-            </section>
+                        <!-- Skor & Bintang -->
+                        <div class="quiz-scorebar">
+                            <div class="score-stars" id="scoreStars">
+                                ⭐⭐⭐
+                            </div>
+                            <div class="score-text">
+                                <span data-ms="Skor:" data-en="Score:">Skor:</span> 
+                                <strong id="quizScore">0</strong>
+                            </div>
+                            <button class="reset-btn" onclick="resetQuiz()">
+                                <span data-ms="Mula Semula" data-en="Restart">Mula Semula</span> 🔄
+                            </button>
+                        </div>
 
-        </main>
-    </div>
+                        <!-- Soalan -->
+                        <div class="quiz-card" id="quizCard">
+                            <div id="quizQuestionArea">
+                                <div class="quiz-question-sound" onclick="playQuestionSpeech()" title="Dengar sebutan soalan">
+                                    <span class="sound-wave">🔊</span>
+                                    <h2 id="quizQuestionText" data-ms="Di mana huruf A?" data-en="Where is the letter A?">Di mana huruf A?</h2>
+                                </div>
+                            </div>
+                            
+                            <div class="quiz-options" id="quizOptions">
+                                <!-- Pilihan Jawapan A-D dijana oleh JS -->
+                                <button class="option-btn">A</button>
+                                <button class="option-btn">B</button>
+                                <button class="option-btn">C</button>
+                                <button class="option-btn">D</button>
+                            </div>
+                        </div>
+
+                        <!-- Info Kuiz Bawah (Hanya untuk Huruf Kecil ABC) -->
+                        <div class="quiz-footer-info" id="quizFooterInfo" style="display: none;">
+                            <h3 class="footer-title" data-ms="MANA HURUF KECIL?" data-en="WHERE IS THE LOWERCASE?">MANA HURUF KECIL?</h3>
+                            <p class="footer-subtitle" data-ms="Uji mata kamu! Cari huruf kecil yang betul" data-en="Test your eyes! Find the correct lowercase letter">Uji mata kamu! Cari huruf kecil yang betul</p>
+                        </div>
+
+                        <!-- Maklum Balas Khas Kuiz -->
+                        <div class="quiz-feedback" id="quizFeedback">
+                            <div class="feedback-content">
+                                <span class="feedback-emoji" id="feedbackEmoji">🌟</span>
+                                <h3 id="feedbackText">Hebat!</h3>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= TAB 3: MELAKAR HURUF/NOMBOR ================= -->
+                <section id="tabContentTrace" class="tab-content">
+                    <div class="trace-container">
+                        <div class="trace-sidebar">
+                            <div class="trace-instructions">
+                                <p data-ms="Pilih huruf dan lakarkan di atas papan!" data-en="Choose a letter and trace it on the board!">Pilih huruf dan lakarkan di atas papan!</p>
+                            </div>
+
+                            <!-- Pilih Huruf untuk Dilakar -->
+                            <div class="trace-letter-selector">
+                                <label for="traceLetterSelect" data-ms="Pilih Huruf:" data-en="Select Letter:">Pilih Huruf:</label>
+                                <select id="traceLetterSelect" onchange="changeTraceLetter()">
+                                    <!-- Dijana oleh JS -->
+                                </select>
+                            </div>
+
+                            <!-- Alat Lukisan -->
+                            <div class="trace-tools">
+                                <h4 data-ms="Pilihan Warna" data-en="Colors">Pilihan Warna</h4>
+                                <div class="color-palette">
+                                    <button class="color-btn active" style="background-color: #FF5A5F;" onclick="setStrokeColor('#FF5A5F', this)"></button>
+                                    <button class="color-btn" style="background-color: #3F88C5;" onclick="setStrokeColor('#3F88C5', this)"></button>
+                                    <button class="color-btn" style="background-color: #13B278;" onclick="setStrokeColor('#13B278', this)"></button>
+                                    <button class="color-btn" style="background-color: #E2B43C;" onclick="setStrokeColor('#E2B43C', this)"></button>
+                                    <button class="color-btn" style="background-color: #9B5DE5;" onclick="setStrokeColor('#9B5DE5', this)"></button>
+                                    <button class="color-btn" style="background-color: #F15BB5;" onclick="setStrokeColor('#F15BB5', this)"></button>
+                                    <button class="color-btn eraser" onclick="setStrokeColor('#FFFFFF', this, true)" title="Pemadam">🧽</button>
+                                </div>
+
+                                <div class="brush-size-control">
+                                    <label for="brushSize" data-ms="Saiz Berus:" data-en="Brush Size:">Saiz Berus:</label>
+                                    <input type="range" id="brushSize" min="10" max="40" value="20" onchange="updateBrushSize(this.value)">
+                                </div>
+
+                                <button class="clear-btn" onclick="clearCanvas()">
+                                    <span data-ms="Padam Semua" data-en="Clear All">Padam Semua</span> 🧹
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Kawasan Kanvas Lukisan -->
+                        <div class="canvas-wrapper">
+                            <!-- Tanda Panduan Latar Belakang -->
+                            <div class="canvas-bg-letter" id="canvasBgLetter">A</div>
+                            <canvas id="traceCanvas" width="500" height="500"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
 
     <!-- ================= DETAIl OVERLAY (KAD BESAR BELAJAR) ================= -->
     <div class="detail-overlay" id="detailOverlay" onclick="closeDetail(event)">

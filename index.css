@@ -1273,3 +1273,213 @@ body {
     20%, 60% { transform: translateX(-8px); }
     40%, 80% { transform: translateX(8px); }
 }
+
+/* ================= SCREEN-BASED LAYOUTS (NEW) ================= */
+.app-screen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: fadeInScreen 0.3s ease-out;
+}
+
+@keyframes fadeInScreen {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Sub-Header Styles for Screens 2 & 3 */
+.sub-header {
+    background-color: #ffffff;
+    border-bottom: 3px solid #f0f2f5;
+    padding: 12px 20px;
+}
+
+.sub-header-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-dark);
+    text-align: center;
+    flex-grow: 1;
+}
+
+.nav-back-btn, .nav-home-btn {
+    font-family: var(--font-primary);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 16px;
+    border: 2px solid #e2e8f0;
+    background-color: #ffffff;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.nav-back-btn:active, .nav-home-btn:active {
+    transform: scale(0.93);
+    background-color: #f7f9fc;
+}
+
+/* Menu Utama (Screen 1) Styles */
+.menu-main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-instructions {
+    text-align: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.menu-instructions p {
+    font-size: 14px;
+    color: #718096;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 6px 14px;
+    border-radius: 18px;
+    display: inline-block;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+}
+
+.menu-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 360px;
+}
+
+.menu-card {
+    font-family: var(--font-primary);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 20px;
+    border-radius: 24px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(58, 50, 80, 0.05);
+}
+
+.menu-card:active {
+    transform: scale(0.96);
+}
+
+/* Card Themes */
+.card-learn {
+    background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
+    border: 3px solid #ffb3c6;
+}
+.card-quiz {
+    background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 100%);
+    border: 3px solid #90caf9;
+}
+.card-trace {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border: 3px solid #a5d6a7;
+}
+
+.menu-card-icon {
+    font-size: 34px;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
+}
+
+.menu-card-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+}
+
+.menu-card-desc {
+    font-size: 12px;
+    color: #4a5568;
+    font-weight: 500;
+    opacity: 0.85;
+}
+
+/* Category Grid (Screen 2) Styles */
+.category-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 360px;
+    padding-top: 10px;
+}
+
+.category-card {
+    font-family: var(--font-primary);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 14px 22px;
+    border-radius: 24px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-align: left;
+    box-shadow: 0 8px 16px rgba(58, 50, 80, 0.05);
+}
+
+.category-card:active {
+    transform: scale(0.96);
+}
+
+.card-abc {
+    background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+    border: 3px solid #fff176;
+}
+.card-123 {
+    background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%);
+    border: 3px solid #ffb74d;
+}
+.card-jawi {
+    background: linear-gradient(135deg, #e1bee7 0%, #ce93d8 100%);
+    border: 3px solid #ba68c8;
+}
+
+.category-card-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
+}
+
+.category-card-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+/* Gameplay Main adjustments */
+.gameplay-main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    height: calc(100% - 60px); /* Height minus the header */
+}
+
+/* Hide old header category switcher and bottom nav */
+.category-switcher, .app-nav {
+    display: none !important;
+}
+

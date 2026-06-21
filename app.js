@@ -39,6 +39,7 @@ let quizScore = 0;
 let quizCorrectLetter = '';
 let quizQuestionVoiceText = '';
 let currentQuizMode = 'upper';
+let currentScreen = 'main'; // 'main', 'category', 'content'
 let voices = [];
 let audioCtx = null;
 
@@ -1106,48 +1107,114 @@ function clearCanvas() {
 
 // ================= FUNGSI AM & TERJEMAHAN =================
 
-// Pertukaran Tab Menu Utama
-function switchTab(tabId) {
-    activeTab = tabId;
-    playSynthSound('click');
+// Urus Penukaran Halaman (Screen Switching)
+function showScreen(screenId) {
+    currentScreen = screenId;
+    
+    // Tunjukkan skrin aktif, sembunyikan yang lain
+    document.getElementById('screenMainMenu').style.display = (screenId === 'main') ? 'flex' : 'none';
+    document.getElementById('screenCategoryMenu').style.display = (screenId === 'category') ? 'flex' : 'none';
+    document.getElementById('screenGameplay').style.display = (screenId === 'content') ? 'flex' : 'none';
 
-    // Kemas kini status tab aktif pada butang navigasi
-    document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-    document.getElementById(`nav${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.add('active');
+    // Jika masuk ke skrin gameplay, setkan tab kandungan yang aktif
+    if (screenId === 'content') {
+        // Tunjukkan tab content yang aktif, sembunyikan yang lain
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(`tabContent${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}`).classList.add('active');
+        
+        // Kemas kini tajuk subheader gameplay
+        const gameplayTitle = document.getElementById('gameplayTitle');
+        if (gameplayTitle) {
+            let activityName = '';
+            let categoryName = '';
+            
+            // Nama aktiviti
+            if (activeTab === 'learn') {
+                activityName = currentLanguage === 'ms' ? 'Belajar' : 'Learn';
+            } else if (activeTab === 'quiz') {
+                activityName = currentLanguage === 'ms' ? 'Kuiz' : 'Quiz';
+            } else if (activeTab === 'trace') {
+                activityName = currentLanguage === 'ms' ? 'Melukis' : 'Drawing';
+            }
 
-    // Paparkan kandungan tab yang sepadan
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-    document.getElementById(`tabContent${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).classList.add('active');
+            // Nama kategori
+            if (currentCategory === 'abc') {
+                categoryName = 'ABC';
+            } else if (currentCategory === '123') {
+                categoryName = '123';
+            } else if (currentCategory === 'jawi') {
+                categoryName = currentLanguage === 'ms' ? 'Alif Ba Ta' : 'Alif Ba Ta';
+            }
 
-    // Inisialisasi semula aktiviti khas setiap tab jika perlu
-    if (tabId === 'quiz') {
-        resetQuiz();
-    } else if (tabId === 'trace') {
-        setTimeout(resizeCanvas, 100); // Pastikan kanvas dilukis semula dengan betul
+            gameplayTitle.textContent = `${activityName} ${categoryName}`;
+        }
     }
 }
 
-// Tetapkan Kategori Utama (ABC / 123 / Jawi)
-function setCategory(category) {
-    if (currentCategory === category) return;
+// Memilih Aktiviti Utama (Belajar, Kuiz, Melukis)
+function selectActivity(activity) {
+    activeTab = activity;
+    playSynthSound('click');
+
+    // Kemas kini tajuk kategori mengikut aktiviti terpilih
+    const categoryMenuTitle = document.getElementById('categoryMenuTitle');
+    if (categoryMenuTitle) {
+        if (activity === 'learn') {
+            categoryMenuTitle.textContent = currentLanguage === 'ms' ? 'Pilih Kategori Belajar' : 'Choose Learn Category';
+        } else if (activity === 'quiz') {
+            categoryMenuTitle.textContent = currentLanguage === 'ms' ? 'Pilih Kategori Kuiz' : 'Choose Quiz Category';
+        } else if (activity === 'trace') {
+            categoryMenuTitle.textContent = currentLanguage === 'ms' ? 'Pilih Kategori Melukis' : 'Choose Drawing Category';
+        }
+    }
+
+    showScreen('category');
+}
+
+// Memilih Kategori (ABC, 123, Jawi)
+function selectCategory(category) {
     currentCategory = category;
     playSynthSound('click');
 
-    // Kemas kini status butang kategori aktif
-    document.getElementById('btnCatAbc').classList.toggle('active', category === 'abc');
-    document.getElementById('btnCat123').classList.toggle('active', category === '123');
-    document.getElementById('btnCatJawi').classList.toggle('active', category === 'jawi');
+    // Tunjukkan / sembunyikan pemilih mod sebutan belajar mengikut keadaan
+    const learnModeSelectorContainer = document.getElementById('learnModeSelectorContainer');
+    if (learnModeSelectorContainer) {
+        learnModeSelectorContainer.style.display = (activeTab === 'learn') ? 'flex' : 'none';
+    }
 
-    // Bina semula grid belajar, kuiz, atau pemilih lakaran
+    // Jalankan inisialisasi modul permainan yang dipilih
     if (activeTab === 'learn') {
         initAbcGrid();
     } else if (activeTab === 'quiz') {
         resetQuiz();
     } else if (activeTab === 'trace') {
         initTraceSelector();
+        setTimeout(resizeCanvas, 100); // Pastikan saiz kanvas betul
     }
 
     updateModeSelectorLabels();
+    showScreen('content');
+}
+
+// Navigasi Kembali ke Kategori
+function goBackToCategory() {
+    playSynthSound('click');
+    showScreen('category');
+}
+
+// Navigasi Kembali ke Menu Utama
+function goHome() {
+    playSynthSound('click');
+    showScreen('main');
+}
+
+// Fungsi Wrapper untuk Keserasian Kod Lama
+function switchTab(tabId) {
+    selectActivity(tabId);
+}
+
+function setCategory(category) {
+    selectCategory(category);
 }
 
 // Kemas kini label pemilih mod belajar
