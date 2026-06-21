@@ -28,9 +28,93 @@ const abcData = [
     { letter: 'Z', ms: { word: 'zirafah', emoji: '🦒' }, en: { word: 'zebra', emoji: '🦓' } }
 ];
 
+const syllableData = {
+    a: [
+        { syllable: 'ba', ms: { word: 'baju', emoji: '👕' }, en: { word: 'shirt', emoji: '👕' } },
+        { syllable: 'ca', ms: { word: 'cawan', emoji: '☕' }, en: { word: 'cup', emoji: '☕' } },
+        { syllable: 'da', ms: { word: 'dadu', emoji: '🎲' }, en: { word: 'dice', emoji: '🎲' } },
+        { syllable: 'ga', ms: { word: 'gajah', emoji: '🐘' }, en: { word: 'elephant', emoji: '🐘' } },
+        { syllable: 'ha', ms: { word: 'hari', emoji: '📅' }, en: { word: 'calendar', emoji: '📅' } },
+        { syllable: 'ja', ms: { word: 'jari', emoji: '☝️' }, en: { word: 'finger', emoji: '☝️' } },
+        { syllable: 'ka', ms: { word: 'kaki', emoji: '🦶' }, en: { word: 'leg', emoji: '🦶' } },
+        { syllable: 'la', ms: { word: 'labu', emoji: '🎃' }, en: { word: 'pumpkin', emoji: '🎃' } },
+        { syllable: 'ma', ms: { word: 'mata', emoji: '👁️' }, en: { word: 'eye', emoji: '👁️' } },
+        { syllable: 'na', ms: { word: 'nasi', emoji: '🍚' }, en: { word: 'rice', emoji: '🍚' } },
+        { syllable: 'pa', ms: { word: 'paku', emoji: '📌' }, en: { word: 'nail', emoji: '📌' } },
+        { syllable: 'ra', ms: { word: 'raja', emoji: '👑' }, en: { word: 'king', emoji: '👑' } },
+        { syllable: 'sa', ms: { word: 'satu', emoji: '1️⃣' }, en: { word: 'one', emoji: '1️⃣' } },
+        { syllable: 'ta', ms: { word: 'tali', emoji: '🎗️' }, en: { word: 'rope', emoji: '🎗️' } }
+    ],
+    i: [
+        { syllable: 'bi', ms: { word: 'biru', emoji: '🔵' }, en: { word: 'blue', emoji: '🔵' } },
+        { syllable: 'ci', ms: { word: 'cili', emoji: '🌶️' }, en: { word: 'chili', emoji: '🌶️' } },
+        { syllable: 'di', ms: { word: 'dinding', emoji: '🧱' }, en: { word: 'wall', emoji: '🧱' } },
+        { syllable: 'gi', ms: { word: 'gigi', emoji: '🦷' }, en: { word: 'tooth', emoji: '🦷' } },
+        { syllable: 'hi', ms: { word: 'hidung', emoji: '👃' }, en: { word: 'nose', emoji: '👃' } },
+        { syllable: 'ji', ms: { word: 'jiran', emoji: '🏡' }, en: { word: 'neighbor', emoji: '🏡' } },
+        { syllable: 'ki', ms: { word: 'kicap', emoji: '🍼' }, en: { word: 'soy sauce', emoji: '🍼' } },
+        { syllable: 'li', ms: { word: 'lilin', emoji: '🕯️' }, en: { word: 'candle', emoji: '🕯️' } },
+        { syllable: 'mi', ms: { word: 'minum', emoji: '🥤' }, en: { word: 'drink', emoji: '🥤' } },
+        { syllable: 'ni', ms: { word: 'nila', emoji: '🎨' }, en: { word: 'indigo', emoji: '🎨' } },
+        { syllable: 'pi', ms: { word: 'pipi', emoji: '😊' }, en: { word: 'cheek', emoji: '😊' } },
+        { syllable: 'ri', ms: { word: 'ribut', emoji: '🌪️' }, en: { word: 'storm', emoji: '🌪️' } },
+        { syllable: 'si', ms: { word: 'sikat', emoji: '🪮' }, en: { word: 'comb', emoji: '🪮' } },
+        { syllable: 'ti', ms: { word: 'tiga', emoji: '3️⃣' }, en: { word: 'three', emoji: '3️⃣' } }
+    ],
+    u: [
+        { syllable: 'bu', ms: { word: 'buku', emoji: '📖' }, en: { word: 'book', emoji: '📖' } },
+        { syllable: 'cu', ms: { word: 'cucu', emoji: '👶' }, en: { word: 'grandchild', emoji: '👶' } },
+        { syllable: 'du', ms: { word: 'duri', emoji: '🌵' }, en: { word: 'rose/thorn', emoji: '🌵' } },
+        { syllable: 'gu', ms: { word: 'guli', emoji: '🔮' }, en: { word: 'marble', emoji: '🔮' } },
+        { syllable: 'hu', ms: { word: 'hujan', emoji: '🌧️' }, en: { word: 'rain', emoji: '🌧️' } },
+        { syllable: 'ju', ms: { word: 'jual', emoji: '💰' }, en: { word: 'sell', emoji: '💰' } },
+        { syllable: 'ku', ms: { word: 'kuda', emoji: '🐴' }, en: { word: 'horse', emoji: '🐴' } },
+        { syllable: 'lu', ms: { word: 'luka', emoji: '🩹' }, en: { word: 'wound', emoji: '🩹' } },
+        { syllable: 'mu', ms: { word: 'muka', emoji: '👦' }, en: { word: 'face', emoji: '👦' } },
+        { syllable: 'nu', ms: { word: 'nuri', emoji: '🦜' }, en: { word: 'parrot', emoji: '🦜' } },
+        { syllable: 'pu', ms: { word: 'pula', emoji: '🏝️' }, en: { word: 'island', emoji: '🏝️' } },
+        { syllable: 'ru', ms: { word: 'rusa', emoji: '🦌' }, en: { word: 'deer', emoji: '🦌' } },
+        { syllable: 'su', ms: { word: 'susu', emoji: '🥛' }, en: { word: 'milk', emoji: '🥛' } },
+        { syllable: 'tu', ms: { word: 'tupai', emoji: '🐿️' }, en: { word: 'squirrel', emoji: '🐿️' } }
+    ],
+    e: [
+        { syllable: 'be', ms: { word: 'beca', emoji: '🛺' }, en: { word: 'trishaw', emoji: '🛺' } },
+        { syllable: 'ce', ms: { word: 'cerek', emoji: '🫖' }, en: { word: 'kettle', emoji: '🫖' } },
+        { syllable: 'de', ms: { word: 'dewan', emoji: '🏛️' }, en: { word: 'hall', emoji: '🏛️' } },
+        { syllable: 'ge', ms: { word: 'gelas', emoji: '🥛' }, en: { word: 'glass', emoji: '🥛' } },
+        { syllable: 'he', ms: { word: 'hebat', emoji: '👍' }, en: { word: 'great', emoji: '👍' } },
+        { syllable: 'je', ms: { word: 'jeti', emoji: '⚓' }, en: { word: 'jetty', emoji: '⚓' } },
+        { syllable: 'ke', ms: { word: 'keju', emoji: '🧀' }, en: { word: 'cheese', emoji: '🧀' } },
+        { syllable: 'le', ms: { word: 'lebah', emoji: '🐝' }, en: { word: 'bee', emoji: '🐝' } },
+        { syllable: 'me', ms: { word: 'meja', emoji: '🧱' }, en: { word: 'table', emoji: '🧱' } },
+        { syllable: 'ne', ms: { word: 'nenek', emoji: '👵' }, en: { word: 'grandmother', emoji: '👵' } },
+        { syllable: 'pe', ms: { word: 'peta', emoji: '🗺️' }, en: { word: 'map', emoji: '🗺️' } },
+        { syllable: 're', ms: { word: 'reban', emoji: '🏚️' }, en: { word: 'coop', emoji: '🏚️' } },
+        { syllable: 'se', ms: { word: 'seluar', emoji: '👖' }, en: { word: 'pants', emoji: '👖' } },
+        { syllable: 'te', ms: { word: 'teko', emoji: '🫖' }, en: { word: 'teapot', emoji: '🫖' } }
+    ],
+    o: [
+        { syllable: 'bo', ms: { word: 'bola', emoji: '⚽' }, en: { word: 'ball', emoji: '⚽' } },
+        { syllable: 'co', ms: { word: 'coklat', emoji: '🍫' }, en: { word: 'chocolate', emoji: '🍫' } },
+        { syllable: 'do', ms: { word: 'dobi', emoji: '🧺' }, en: { word: 'laundry', emoji: '🧺' } },
+        { syllable: 'go', ms: { word: 'gol', emoji: '🥅' }, en: { word: 'goal', emoji: '🥅' } },
+        { syllable: 'ho', ms: { word: 'hoki', emoji: '' }, en: { word: 'hockey', emoji: '' } },
+        { syllable: 'jo', ms: { word: 'johan', emoji: '🏆' }, en: { word: 'champion', emoji: '🏆' } },
+        { syllable: 'ko', ms: { word: 'kopi', emoji: '☕' }, en: { word: 'coffee', emoji: '☕' } },
+        { syllable: 'lo', ms: { word: 'lori', emoji: '🚚' }, en: { word: 'lorry', emoji: '🚚' } },
+        { syllable: 'mo', ms: { word: 'monyet', emoji: '🐒' }, en: { word: 'monkey', emoji: '🐒' } },
+        { syllable: 'no', ms: { word: 'nota', emoji: '📝' }, en: { word: 'note', emoji: '📝' } },
+        { syllable: 'po', ms: { word: 'polis', emoji: '👮' }, en: { word: 'police', emoji: '👮' } },
+        { syllable: 'ro', ms: { word: 'roti', emoji: '🍞' }, en: { word: 'bread', emoji: '🍞' } },
+        { syllable: 'so', ms: { word: 'sofa', emoji: '🛋️' }, en: { word: 'sofa', emoji: '🛋️' } },
+        { syllable: 'to', ms: { word: 'topi', emoji: '🧢' }, en: { word: 'hat', emoji: '🧢' } }
+    ]
+};
+
 // Keadaan Aplikasi (App State)
 let currentLanguage = 'ms'; // 'ms' atau 'en'
 let currentCategory = 'abc'; // 'abc' atau '123'
+let currentSyllableVowel = 'a';
 let learnVoiceMode = 'letter'; // 'letter' atau 'word'
 let isMuted = false;
 let activeTab = 'learn';
@@ -184,8 +268,12 @@ function initAudioContext() {
 
 // Sebut Teks Menggunakan Web Speech API (Dinyahaktifkan mengikut permintaan pengguna)
 function speakText(text, lang) {
-    // TTS dinyahaktifkan untuk memastikan hanya fail audio tempatan (assets) digunakan.
-    console.log("TTS System Disabled. Requested text:", text);
+    if (currentCategory === 'syllable') {
+        speakSyllableWord(text, lang);
+    } else {
+        // TTS dinyahaktifkan untuk memastikan hanya fail audio tempatan (assets) digunakan.
+        console.log("TTS System Disabled. Requested text:", text);
+    }
 }
 
 // Kesan Bunyi Sintetik Menggunakan Web Audio API (Tiada fail audio luaran diperlukan!)
@@ -272,7 +360,58 @@ function initAbcGrid() {
     const isAbc = currentCategory === 'abc';
     const is123 = currentCategory === '123';
     const isJawi = currentCategory === 'jawi';
+    const isSyllable = currentCategory === 'syllable';
     
+    if (isSyllable) {
+        // Render vowel buttons
+        const vowelContainer = document.createElement('div');
+        vowelContainer.className = 'vowel-selector-container';
+        
+        ['a', 'i', 'u', 'e', 'o'].forEach(v => {
+            const btn = document.createElement('button');
+            btn.className = `vowel-btn ${v === currentSyllableVowel ? 'active' : ''}`;
+            btn.textContent = v;
+            btn.onclick = () => {
+                currentSyllableVowel = v;
+                playSyllableSound(v);
+                initAbcGrid();
+            };
+            vowelContainer.appendChild(btn);
+        });
+        grid.appendChild(vowelContainer);
+
+        // Render card container
+        const cardsGrid = document.createElement('div');
+        cardsGrid.className = 'syllables-cards-grid';
+
+        const data = syllableData[currentSyllableVowel];
+        data.forEach((item, index) => {
+            const langData = item[currentLanguage];
+            const card = document.createElement('div');
+            const colorClass = cardColors[index % cardColors.length];
+            card.className = `abc-card ${colorClass} syllable-card`;
+            
+            card.innerHTML = `
+                <span class="abc-card-letter" style="font-size: 38px;">${item.syllable}</span>
+                <span class="abc-card-emoji">${langData.emoji}</span>
+                <span class="abc-card-word">${langData.word}</span>
+            `;
+            
+            card.onclick = () => {
+                if (learnVoiceMode === 'letter') {
+                    playSyllableSound(item.syllable);
+                    card.classList.add('card-bounce-active');
+                    setTimeout(() => card.classList.remove('card-bounce-active'), 300);
+                } else {
+                    openDetail(index);
+                }
+            };
+            cardsGrid.appendChild(card);
+        });
+        grid.appendChild(cardsGrid);
+        return;
+    }
+
     let data;
     if (isAbc) data = abcData;
     else if (is123) data = numberData;
@@ -346,11 +485,13 @@ function openDetail(index) {
     const isAbc = currentCategory === 'abc';
     const is123 = currentCategory === '123';
     const isJawi = currentCategory === 'jawi';
+    const isSyllable = currentCategory === 'syllable';
     
     let data;
     if (isAbc) data = abcData;
     else if (is123) data = numberData;
-    else data = jawiData;
+    else if (isJawi) data = jawiData;
+    else if (isSyllable) data = syllableData[currentSyllableVowel];
 
     const item = data[index];
     const langData = item[currentLanguage];
@@ -380,6 +521,12 @@ function openDetail(index) {
         detailEmoji.className = 'detail-emoji';
         detailEmoji.innerHTML = langData.emoji;
         document.getElementById('detailWord').textContent = `${item.name} (${langData.word})`;
+    } else if (isSyllable) {
+        document.getElementById('detailLetter').textContent = item.syllable;
+        const detailEmoji = document.getElementById('detailEmoji');
+        detailEmoji.className = 'detail-emoji';
+        detailEmoji.innerHTML = langData.emoji;
+        document.getElementById('detailWord').textContent = langData.word;
     }
     
     const overlay = document.getElementById('detailOverlay');
@@ -404,7 +551,8 @@ function navigateLetter(direction) {
     let data;
     if (currentCategory === 'abc') data = abcData;
     else if (currentCategory === '123') data = numberData;
-    else data = jawiData;
+    else if (currentCategory === 'jawi') data = jawiData;
+    else if (currentCategory === 'syllable') data = syllableData[currentSyllableVowel];
 
     if (nextIdx >= data.length) nextIdx = 0;
     if (nextIdx < 0) nextIdx = data.length - 1;
@@ -413,6 +561,132 @@ function navigateLetter(direction) {
 }
 
 // Memainkan fail audio sebutan huruf (.mp3) dengan fallback kepada TTS jika tiada fail
+function getBestVoice(langCode) {
+    if (!voices || voices.length === 0) {
+        if (window.speechSynthesis) {
+            voices = window.speechSynthesis.getVoices();
+        }
+    }
+    
+    // If langCode is Malay ('ms'), search for Malay first, then Indonesian fallback
+    if (langCode === 'ms') {
+        const msVoice = voices.find(v => {
+            const l = v.lang.toLowerCase();
+            return l.includes('ms-') || l.includes('my') || l === 'ms' || l.includes('zlm');
+        });
+        if (msVoice) return msVoice;
+        
+        const idVoice = voices.find(v => {
+            const l = v.lang.toLowerCase();
+            return l.includes('id-') || l === 'id';
+        });
+        if (idVoice) return idVoice;
+    }
+    
+    // For English
+    if (langCode === 'en') {
+        const enVoice = voices.find(v => {
+            const l = v.lang.toLowerCase();
+            return l.includes('en-us') || l.includes('en-gb') || l.startsWith('en');
+        });
+        if (enVoice) return enVoice;
+    }
+    
+    // Fallback to any voice matching the language code prefix
+    const generalVoice = voices.find(v => v.lang.toLowerCase().startsWith(langCode));
+    if (generalVoice) return generalVoice;
+    
+    return null;
+}
+
+function playAudioSegments(paths) {
+    if (isMuted || !paths || paths.length === 0) return;
+    
+    // Stop TTS if it's currently speaking to prevent double speech
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    
+    let currentIndex = 0;
+    
+    function playNext() {
+        if (currentIndex >= paths.length) return;
+        const currentPath = paths[currentIndex];
+        const audio = new Audio(currentPath);
+        
+        audio.onended = () => {
+            currentIndex++;
+            playNext();
+        };
+        audio.onerror = () => {
+            console.warn("Failed to play audio segment: " + currentPath);
+            currentIndex++;
+            playNext();
+        };
+        
+        audio.play().catch(err => {
+            console.error("Playback failed for segment " + currentPath + ":", err);
+            currentIndex++;
+            playNext();
+        });
+    }
+    
+    playNext();
+}
+
+function playSyllableSound(syllable) {
+    if (isMuted) return;
+    
+    const audioPath = `assets/audio/ms/syllables/${syllable.toLowerCase()}.mp3`;
+    const audio = new Audio(audioPath);
+    
+    audio.play().catch(err => {
+        // Fallback to TTS if the local MP3 is not found
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(syllable);
+            const voice = getBestVoice('ms');
+            if (voice) {
+                utterance.voice = voice;
+                utterance.lang = voice.lang;
+            } else {
+                utterance.lang = 'ms-MY';
+            }
+            utterance.rate = 0.65;
+            utterance.pitch = 1.1;
+            utterance.volume = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+    });
+}
+
+function speakSyllableWord(word, lang) {
+    if (isMuted) return;
+    
+    const subDir = lang === 'ms' ? 'ms' : 'en';
+    const audioPath = `assets/audio/${subDir}/syllable_words/${word.toLowerCase().trim()}.mp3`;
+    const audio = new Audio(audioPath);
+    
+    audio.play().catch(err => {
+        // Fallback to TTS if local MP3 is missing
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            const voice = getBestVoice(lang);
+            if (voice) {
+                utterance.voice = voice;
+                utterance.lang = voice.lang;
+            } else {
+                utterance.lang = lang === 'ms' ? 'ms-MY' : 'en-US';
+            }
+            utterance.rate = 0.75;
+            utterance.pitch = 1.1;
+            utterance.volume = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+    });
+}
+
 function playLetterSound(letter, lang) {
     if (isMuted) return;
     
@@ -501,6 +775,9 @@ function playCurrentLetterSpeech() {
         playNumberSound(item.number, currentLanguage);
     } else if (currentCategory === 'jawi') {
         playJawiLetterSound(currentLetterIdx + 1);
+    } else if (currentCategory === 'syllable') {
+        const item = syllableData[currentSyllableVowel][currentLetterIdx];
+        playSyllableSound(item.syllable);
     }
 }
 
@@ -515,6 +792,10 @@ function playCurrentWordSpeech() {
         playNumberSentenceSound(item.number, currentLanguage);
     } else if (currentCategory === 'jawi') {
         playJawiWordSound(currentLetterIdx + 1, currentLanguage);
+    } else if (currentCategory === 'syllable') {
+        const item = syllableData[currentSyllableVowel][currentLetterIdx];
+        const word = item[currentLanguage].word;
+        speakSyllableWord(word, currentLanguage);
     }
 }
 
@@ -537,6 +818,24 @@ function playFullSpeech() {
         playNumberSentenceSound(item.number, currentLanguage);
     } else if (currentCategory === 'jawi') {
         playJawiSentenceSound(currentLetterIdx + 1, currentLanguage);
+    } else if (currentCategory === 'syllable') {
+        const item = syllableData[currentSyllableVowel][currentLetterIdx];
+        const word = item[currentLanguage].word;
+        if (currentLanguage === 'ms') {
+            const segments = [
+                `assets/audio/ms/syllables/${item.syllable.toLowerCase()}.mp3`,
+                `assets/audio/ms/syllables/untuk.mp3`,
+                `assets/audio/ms/syllable_words/${word.toLowerCase()}.mp3`
+            ];
+            playAudioSegments(segments);
+        } else {
+            const segments = [
+                `assets/audio/ms/syllables/${item.syllable.toLowerCase()}.mp3`,
+                `assets/audio/en/syllables/is_for.mp3`,
+                `assets/audio/en/syllable_words/${word.toLowerCase()}.mp3`
+            ];
+            playAudioSegments(segments);
+        }
     }
 }
 
@@ -678,6 +977,7 @@ function generateQuizQuestion() {
     const isAbc = currentCategory === 'abc';
     const is123 = currentCategory === '123';
     const isJawi = currentCategory === 'jawi';
+    const isSyllable = currentCategory === 'syllable';
     
     const selector = document.getElementById('quizModeSelector');
     if (selector) {
@@ -687,7 +987,13 @@ function generateQuizQuestion() {
     let data;
     if (isAbc) data = abcData;
     else if (is123) data = numberData;
-    else data = jawiData;
+    else if (isJawi) data = jawiData;
+    else if (isSyllable) {
+        data = [];
+        Object.keys(syllableData).forEach(v => {
+            data = data.concat(syllableData[v]);
+        });
+    }
 
     // Pilih satu rawak sebagai jawapan betul
     const correctIdx = Math.floor(Math.random() * data.length);
@@ -766,6 +1072,15 @@ function generateQuizQuestion() {
                 if (txtQuestion) txtQuestion.textContent = `Where is the letter ${letterName}?`;
                 quizQuestionVoiceText = `Where is the letter ${letterName}?`;
             }
+        } else if (isSyllable) {
+            quizCorrectLetter = correctItem.syllable;
+            if (currentLanguage === 'ms') {
+                if (txtQuestion) txtQuestion.textContent = `Di mana suku kata ${quizCorrectLetter}?`;
+                quizQuestionVoiceText = `Di mana suku kata ${quizCorrectLetter}?`;
+            } else {
+                if (txtQuestion) txtQuestion.textContent = `Where is the syllable ${quizCorrectLetter}?`;
+                quizQuestionVoiceText = `Where is the syllable ${quizCorrectLetter}?`;
+            }
         }
     }
 
@@ -779,8 +1094,10 @@ function generateQuizQuestion() {
             randomVal = isLowercase ? data[randomIdx].letter.toLowerCase() : data[randomIdx].letter;
         } else if (is123) {
             randomVal = data[randomIdx].number;
-        } else {
+        } else if (isJawi) {
             randomVal = data[randomIdx].letter;
+        } else if (isSyllable) {
+            randomVal = data[randomIdx].syllable;
         }
         
         if (!options.includes(randomVal)) {
@@ -814,6 +1131,20 @@ function generateQuizQuestion() {
             playNumberQuizSound(quizCorrectLetter, currentLanguage, quizQuestionVoiceText);
         } else if (isJawi) {
             playJawiQuizSound(correctIdx + 1, currentLanguage, quizQuestionVoiceText);
+        } else if (isSyllable) {
+            if (currentLanguage === 'ms') {
+                const segments = [
+                    'assets/audio/ms/syllables/di_mana_suku_kata.mp3',
+                    `assets/audio/ms/syllables/${quizCorrectLetter.toLowerCase()}.mp3`
+                ];
+                playAudioSegments(segments);
+            } else {
+                const segments = [
+                    'assets/audio/en/syllables/where_is_the_syllable.mp3',
+                    `assets/audio/ms/syllables/${quizCorrectLetter.toLowerCase()}.mp3`
+                ];
+                playAudioSegments(segments);
+            }
         }
     }, 300);
 }
@@ -827,6 +1158,20 @@ function playQuestionSpeech() {
     } else if (currentCategory === 'jawi') {
         const idx = jawiData.findIndex(item => item.letter === quizCorrectLetter);
         playJawiQuizSound(idx + 1, currentLanguage, quizQuestionVoiceText);
+    } else if (currentCategory === 'syllable') {
+        if (currentLanguage === 'ms') {
+            const segments = [
+                'assets/audio/ms/syllables/di_mana_suku_kata.mp3',
+                `assets/audio/ms/syllables/${quizCorrectLetter.toLowerCase()}.mp3`
+            ];
+            playAudioSegments(segments);
+        } else {
+            const segments = [
+                'assets/audio/en/syllables/where_is_the_syllable.mp3',
+                `assets/audio/ms/syllables/${quizCorrectLetter.toLowerCase()}.mp3`
+            ];
+            playAudioSegments(segments);
+        }
     }
 }
 
@@ -852,10 +1197,18 @@ function checkQuizAnswer(selectedLetter, buttonElement) {
         feedback.className = 'quiz-feedback correct';
         if (currentLanguage === 'ms') {
             feedbackText.textContent = 'Hebat! Betul!';
-            speakText('Hebat! Betul!', 'ms');
+            if (currentCategory === 'syllable') {
+                playAudioSegments(['assets/audio/ms/syllables/hebat_betul.mp3']);
+            } else {
+                speakText('Hebat! Betul!', 'ms');
+            }
         } else {
             feedbackText.textContent = 'Great job! Correct!';
-            speakText('Great job! Correct!', 'en');
+            if (currentCategory === 'syllable') {
+                playAudioSegments(['assets/audio/en/syllables/great_job_correct.mp3']);
+            } else {
+                speakText('Great job! Correct!', 'en');
+            }
         }
 
         // Tunjukkan bintang kemenangan (confetti simulasi)
@@ -871,10 +1224,18 @@ function checkQuizAnswer(selectedLetter, buttonElement) {
         feedback.className = 'quiz-feedback wrong';
         if (currentLanguage === 'ms') {
             feedbackText.textContent = 'Cuba lagi ya!';
-            speakText('Cuba lagi', 'ms');
+            if (currentCategory === 'syllable') {
+                playAudioSegments(['assets/audio/ms/syllables/cuba_lagi.mp3']);
+            } else {
+                speakText('Cuba lagi', 'ms');
+            }
         } else {
             feedbackText.textContent = 'Try again!';
-            speakText('Try again', 'en');
+            if (currentCategory === 'syllable') {
+                playAudioSegments(['assets/audio/en/syllables/try_again.mp3']);
+            } else {
+                speakText('Try again', 'en');
+            }
         }
 
         // Cari butang betul dan beri highlight lembut
@@ -1144,6 +1505,8 @@ function showScreen(screenId) {
                 categoryName = '123';
             } else if (currentCategory === 'jawi') {
                 categoryName = currentLanguage === 'ms' ? 'Alif Ba Ta' : 'Alif Ba Ta';
+            } else if (currentCategory === 'syllable') {
+                categoryName = currentLanguage === 'ms' ? 'Suku Kata' : 'Syllables';
             }
 
             gameplayTitle.textContent = `${activityName} ${categoryName}`;
@@ -1165,6 +1528,56 @@ function selectActivity(activity) {
             categoryMenuTitle.textContent = currentLanguage === 'ms' ? 'Pilih Kategori Kuiz' : 'Choose Quiz Category';
         } else if (activity === 'trace') {
             categoryMenuTitle.textContent = currentLanguage === 'ms' ? 'Pilih Kategori Melukis' : 'Choose Drawing Category';
+        }
+    }
+
+    // Tapis butang Suku Kata supaya disembunyikan untuk Melukis
+    const btnSyllable = document.getElementById('cardCatSyllable');
+    if (btnSyllable) {
+        if (activity === 'trace') {
+            btnSyllable.style.display = 'none';
+        } else {
+            btnSyllable.style.display = 'flex';
+        }
+    }
+
+    // Ubah suai nama kad kategori berdasarkan aktiviti (buang 'Belajar' untuk kuiz)
+    const isQuiz = activity === 'quiz';
+    const cardAbcTitle = document.querySelector('.card-abc .category-card-title');
+    const card123Title = document.querySelector('.card-123 .category-card-title');
+    const cardSyllableTitle = document.querySelector('.card-syllable .category-card-title');
+
+    if (isQuiz) {
+        if (cardAbcTitle) {
+            cardAbcTitle.textContent = 'ABC';
+            cardAbcTitle.setAttribute('data-ms', 'ABC');
+            cardAbcTitle.setAttribute('data-en', 'ABC');
+        }
+        if (card123Title) {
+            card123Title.textContent = '123';
+            card123Title.setAttribute('data-ms', '123');
+            card123Title.setAttribute('data-en', '123');
+        }
+        if (cardSyllableTitle) {
+            cardSyllableTitle.textContent = currentLanguage === 'ms' ? 'Suku Kata' : 'Syllables';
+            cardSyllableTitle.setAttribute('data-ms', 'Suku Kata');
+            cardSyllableTitle.setAttribute('data-en', 'Syllables');
+        }
+    } else {
+        if (cardAbcTitle) {
+            cardAbcTitle.textContent = currentLanguage === 'ms' ? 'Belajar ABC' : 'Learn ABC';
+            cardAbcTitle.setAttribute('data-ms', 'Belajar ABC');
+            cardAbcTitle.setAttribute('data-en', 'Learn ABC');
+        }
+        if (card123Title) {
+            card123Title.textContent = currentLanguage === 'ms' ? 'Belajar 123' : 'Learn 123';
+            card123Title.setAttribute('data-ms', 'Belajar 123');
+            card123Title.setAttribute('data-en', 'Learn 123');
+        }
+        if (cardSyllableTitle) {
+            cardSyllableTitle.textContent = currentLanguage === 'ms' ? 'Belajar Suku Kata' : 'Learn Syllables';
+            cardSyllableTitle.setAttribute('data-ms', 'Belajar Suku Kata');
+            cardSyllableTitle.setAttribute('data-en', 'Learn Syllables');
         }
     }
 
@@ -1245,6 +1658,14 @@ function updateModeSelectorLabels() {
         } else {
             btnVoiceLetter.textContent = '🕌 Say Letter (ا)';
             btnVoiceWord.textContent = '🕌 Letter & Word';
+        }
+    } else if (currentCategory === 'syllable') {
+        if (currentLanguage === 'ms') {
+            btnVoiceLetter.textContent = '🗣️ Sebut Suku Kata (ba)';
+            btnVoiceWord.textContent = '🗣️ Suku Kata & Perkataan';
+        } else {
+            btnVoiceLetter.textContent = '🗣️ Say Syllable (ba)';
+            btnVoiceWord.textContent = '🗣️ Syllable & Word';
         }
     }
 }

@@ -355,83 +355,114 @@ body {
 
 /* Pemilih Mod Sebutan Belajar */
 .learn-mode-selector {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     margin-bottom: 16px;
-    background-color: rgba(255, 255, 255, 0.6);
-    padding: 6px;
-    border-radius: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.8);
+    width: 100%;
+    padding: 0;
+    background: none;
+    border: none;
 }
 
 .learn-mode-btn {
-    flex: 1;
     font-family: var(--font-primary);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 8px 10px;
-    border: none;
-    background: none;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 10px 8px;
+    border: 2px solid transparent;
     border-radius: 14px;
     cursor: pointer;
-    color: #718096;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
+    gap: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    backdrop-filter: blur(4px);
 }
 
+.learn-mode-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+}
+
+/* Warna butang mengikut ID untuk belajar */
+#btnVoiceLetter          { border-color: #b3d4ee; color: #2a6496; background: #e8f3fb; }
+#btnVoiceWord            { border-color: #ffcc80; color: #e65100; background: #fff3e0; }
+
+/* State aktif mengikut mod untuk belajar */
+#btnVoiceLetter.active   { background: linear-gradient(135deg,#4fa8e8,#3f88c5); border-color: #3f88c5; color: #fff; box-shadow: 0 4px 14px rgba(63,136,197,0.35); }
+#btnVoiceWord.active     { background: linear-gradient(135deg,#ffb347,#e2b43c); border-color: #e2b43c; color: #fff; box-shadow: 0 4px 14px rgba(226,180,60,0.35); }
+
 .learn-mode-btn.active {
-    background-color: var(--color-secondary);
-    color: #ffffff;
-    box-shadow: 0 4px 10px rgba(63, 136, 197, 0.2);
+    transform: scale(1.03);
 }
 
 .learn-mode-btn:active {
-    transform: scale(0.97);
+    transform: scale(0.96);
 }
 
 /* Pemilih Mod Kuiz */
 .quiz-mode-selector {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     margin-bottom: 16px;
-    background-color: rgba(255, 255, 255, 0.6);
-    padding: 6px;
-    border-radius: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.8);
     width: 100%;
+    padding: 0;
+    background: none;
+    border: none;
 }
 
 .quiz-mode-btn {
-    flex: 1;
     font-family: var(--font-primary);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 8px 10px;
-    border: none;
-    background: none;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 10px 8px;
+    border: 2px solid transparent;
     border-radius: 14px;
     cursor: pointer;
-    color: #718096;
-    transition: all 0.2s ease;
+    color: #555;
+    background: rgba(255,255,255,0.85);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
+    gap: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    backdrop-filter: blur(4px);
 }
 
+.quiz-mode-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+}
+
+/* Warna butang mengikut ID */
+#btnQuizUpper           { border-color: #b3d4ee; color: #2a6496; background: #e8f3fb; }
+#btnQuizLower           { border-color: #a5d6a7; color: #2e7d32; background: #e8f5e9; }
+#btnQuizMissing         { border-color: #ffcc80; color: #e65100; background: #fff3e0; }
+#btnQuizAnagram         { border-color: #ce93d8; color: #6a1b9a; background: #f3e5f5; }
+#btnQuizSylStd          { border-color: #b3d4ee; color: #2a6496; background: #e8f3fb; }
+#btnQuizSplit           { border-color: #ce93d8; color: #6a1b9a; background: #f3e5f5; }
+
+/* State aktif mengikut mod */
+#btnQuizUpper.active    { background: linear-gradient(135deg,#4fa8e8,#3f88c5); border-color: #3f88c5; color: #fff; box-shadow: 0 4px 14px rgba(63,136,197,0.35); }
+#btnQuizLower.active    { background: linear-gradient(135deg,#43d494,#13b278); border-color: #13b278; color: #fff; box-shadow: 0 4px 14px rgba(19,178,120,0.35); }
+#btnQuizMissing.active  { background: linear-gradient(135deg,#ffb347,#e2b43c); border-color: #e2b43c; color: #fff; box-shadow: 0 4px 14px rgba(226,180,60,0.35); }
+#btnQuizAnagram.active  { background: linear-gradient(135deg,#b17bf5,#9b5de5); border-color: #9b5de5; color: #fff; box-shadow: 0 4px 14px rgba(155,93,229,0.35); }
+#btnQuizSylStd.active   { background: linear-gradient(135deg,#4fa8e8,#3f88c5); border-color: #3f88c5; color: #fff; box-shadow: 0 4px 14px rgba(63,136,197,0.35); }
+#btnQuizSplit.active    { background: linear-gradient(135deg,#b17bf5,#9b5de5); border-color: #9b5de5; color: #fff; box-shadow: 0 4px 14px rgba(155,93,229,0.35); }
+
 .quiz-mode-btn.active {
-    background-color: var(--color-primary);
-    color: #ffffff;
-    box-shadow: 0 4px 10px rgba(255, 90, 95, 0.2);
+    transform: scale(1.03);
 }
 
 .quiz-mode-btn:active {
-    transform: scale(0.97);
+    transform: scale(0.96);
 }
 
 .card-bounce-active {
@@ -1456,6 +1487,10 @@ body {
     background: linear-gradient(135deg, #e1bee7 0%, #ce93d8 100%);
     border: 3px solid #ba68c8;
 }
+.card-syllable {
+    background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+    border: 3px solid #80cbc4;
+}
 
 .category-card-img {
     width: 48px;
@@ -1464,10 +1499,70 @@ body {
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
 }
 
+.category-card-icon-emoji {
+    font-size: 38px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
+}
+
 .category-card-title {
     font-size: 18px;
     font-weight: 800;
     color: var(--text-dark);
+}
+
+/* Pemilih Kumpulan Vokal Suku Kata */
+.vowel-selector-container {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    width: 100%;
+    padding: 4px;
+}
+
+.vowel-btn {
+    font-family: var(--font-primary);
+    font-size: 20px;
+    font-weight: 700;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 3px solid #e2e8f0;
+    background-color: #ffffff;
+    color: var(--text-dark);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-transform: uppercase;
+}
+
+.vowel-btn:active {
+    transform: scale(0.9);
+}
+
+.vowel-btn.active {
+    background-color: var(--color-secondary);
+    color: #ffffff;
+    border-color: #3f88c5;
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(63, 136, 197, 0.3);
+}
+
+.syllables-cards-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
 }
 
 /* Gameplay Main adjustments */
@@ -1481,5 +1576,340 @@ body {
 /* Hide old header category switcher and bottom nav */
 .category-switcher, .app-nav {
     display: none !important;
+}
+
+/* ================= KUIZ: PEMILIH MOD - GRID OVERRIDE ================= */
+.quiz-mode-selector {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    flex-wrap: unset !important;
+    gap: 8px !important;
+    margin-bottom: 14px !important;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.quiz-mode-btn {
+    flex: none !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    white-space: normal !important;
+    font-size: 12.5px !important;
+    padding: 10px 8px !important;
+}
+
+/* ================= KUIZ 1: HURUF HILANG ================= */
+.missing-letter-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+    position: relative;
+    width: 100%;
+}
+
+.missing-sound-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #fff9c4, #ffe082);
+    border: 2px solid #f9a825;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.missing-sound-btn:active { transform: scale(0.9); }
+
+.missing-letter-emoji {
+    font-size: 60px;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12));
+    animation: wiggleEmoji 3s infinite ease-in-out;
+}
+
+.missing-letter-word {
+    display: flex;
+    gap: 5px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 4px 8px;
+}
+
+.missing-letter-char {
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--text-dark);
+    font-family: var(--font-primary);
+    line-height: 1.1;
+}
+
+.missing-letter-blank {
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--color-primary);
+    border-bottom: 5px solid var(--color-primary);
+    min-width: 36px;
+    text-align: center;
+    line-height: 1.1;
+    animation: pulse 1.2s ease-in-out infinite;
+    display: inline-block;
+}
+
+.missing-letter-instruction {
+    font-size: 13px;
+    font-weight: 600;
+    color: #718096;
+    font-family: var(--font-primary);
+    text-align: center;
+}
+
+/* ================= KUIZ 2: SUSUN HURUF (ANAGRAM) ================= */
+.anagram-quiz-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 4px 0;
+}
+
+.anagram-question-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    width: 100%;
+}
+
+.anagram-sound-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+    border: 2px solid #66bb6a;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.anagram-sound-btn:active { transform: scale(0.9); }
+
+.anagram-emoji {
+    font-size: 60px;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12));
+    animation: wiggleEmoji 3s infinite ease-in-out;
+}
+
+.anagram-instruction {
+    font-size: 13px;
+    font-weight: 600;
+    color: #718096;
+    font-family: var(--font-primary);
+    text-align: center;
+}
+
+.anagram-answer-slots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px 8px;
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border-radius: 18px;
+    border: 2px dashed #a5d6a7;
+    width: 100%;
+    min-height: 68px;
+    align-items: center;
+}
+
+.anagram-slot {
+    width: 52px;
+    height: 52px;
+    border-radius: 13px;
+    border: 3px dashed #a5d6a7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    font-family: var(--font-primary);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(255, 255, 255, 0.5);
+    color: transparent;
+}
+
+.anagram-slot.filled {
+    border-style: solid;
+    border-color: var(--color-success);
+    background: linear-gradient(135deg, #13b278, #0e9262);
+    color: white;
+    box-shadow: 0 4px 10px rgba(19, 178, 120, 0.3);
+    transform: scale(1.05);
+}
+
+.anagram-slot.filled:hover {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    border-color: var(--color-primary);
+}
+
+.anagram-letter-pool {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 4px;
+}
+
+.anagram-tile {
+    width: 52px;
+    height: 52px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #FFD166, #F4A261);
+    color: #3a3250;
+    font-size: 24px;
+    font-weight: 800;
+    font-family: var(--font-primary);
+    border: 3px solid rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 5px 0 rgba(0,0,0,0.2), 0 8px 15px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.anagram-tile:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 0 rgba(0,0,0,0.2), 0 14px 20px rgba(0,0,0,0.15);
+}
+
+.anagram-tile:active {
+    transform: translateY(0) scale(0.92);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+}
+
+.anagram-tile.used {
+    opacity: 0.22;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* ================= KUIZ 3: SUKU KATA PECAH ================= */
+.split-syllable-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+    position: relative;
+    width: 100%;
+}
+
+.split-sound-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e1bee7, #ce93d8);
+    border: 2px solid #ab47bc;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.split-sound-btn:active { transform: scale(0.9); }
+
+.split-emoji {
+    font-size: 60px;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,0.12));
+    animation: wiggleEmoji 3s infinite ease-in-out;
+}
+
+.split-word-hint {
+    font-size: 13px;
+    font-weight: 600;
+    color: #718096;
+    font-family: var(--font-primary);
+    text-align: center;
+}
+
+.split-word-hint strong {
+    color: var(--color-accent);
+    font-size: 15px;
+}
+
+.split-syllable-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 4px;
+    justify-content: center;
+}
+
+.split-syllable-known {
+    background: linear-gradient(135deg, #4ECDC4, #26A69A);
+    color: white;
+    border-radius: 16px;
+    padding: 11px 18px;
+    font-size: 28px;
+    font-weight: 800;
+    font-family: var(--font-primary);
+    box-shadow: 0 5px 0 rgba(0,0,0,0.15), 0 8px 16px rgba(78, 205, 196, 0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.split-syllable-plus {
+    font-size: 22px;
+    font-weight: 800;
+    color: #a0aec0;
+}
+
+.split-syllable-blank {
+    width: 80px;
+    height: 56px;
+    border: 4px dashed var(--color-accent);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--color-accent);
+    font-family: var(--font-primary);
+    animation: pulse 1.4s ease-in-out infinite;
+    background: rgba(155, 93, 229, 0.06);
+}
+
+.split-quiz-active .option-btn {
+    font-size: 26px !important;
+    height: 78px !important;
+    letter-spacing: 1px;
 }
 

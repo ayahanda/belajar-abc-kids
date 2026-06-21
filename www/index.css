@@ -1456,6 +1456,10 @@ body {
     background: linear-gradient(135deg, #e1bee7 0%, #ce93d8 100%);
     border: 3px solid #ba68c8;
 }
+.card-syllable {
+    background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+    border: 3px solid #80cbc4;
+}
 
 .category-card-img {
     width: 48px;
@@ -1464,10 +1468,70 @@ body {
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
 }
 
+.category-card-icon-emoji {
+    font-size: 38px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));
+}
+
 .category-card-title {
     font-size: 18px;
     font-weight: 800;
     color: var(--text-dark);
+}
+
+/* Pemilih Kumpulan Vokal Suku Kata */
+.vowel-selector-container {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    width: 100%;
+    padding: 4px;
+}
+
+.vowel-btn {
+    font-family: var(--font-primary);
+    font-size: 20px;
+    font-weight: 700;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 3px solid #e2e8f0;
+    background-color: #ffffff;
+    color: var(--text-dark);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    text-transform: uppercase;
+}
+
+.vowel-btn:active {
+    transform: scale(0.9);
+}
+
+.vowel-btn.active {
+    background-color: var(--color-secondary);
+    color: #ffffff;
+    border-color: #3f88c5;
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(63, 136, 197, 0.3);
+}
+
+.syllables-cards-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 100%;
 }
 
 /* Gameplay Main adjustments */

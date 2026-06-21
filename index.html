@@ -98,6 +98,11 @@
                         <img src="assets/images/icon_123.png" alt="Belajar 123" class="category-card-img">
                         <span class="category-card-title" data-ms="Belajar 123" data-en="Learn 123">Belajar 123</span>
                     </button>
+                    <!-- Suku Kata -->
+                    <button id="cardCatSyllable" class="category-card card-syllable" onclick="selectCategory('syllable')">
+                        <span class="category-card-icon-emoji">🗣️</span>
+                        <span class="category-card-title" data-ms="Belajar Suku Kata" data-en="Learn Syllables">Belajar Suku Kata</span>
+                    </button>
                     <!-- Jawi -->
                     <button class="category-card card-jawi" onclick="selectCategory('jawi')">
                         <img src="assets/images/icon_jawi.png" alt="Alif Ba Ta" class="category-card-img">
@@ -129,7 +134,7 @@
                     <!-- Pemilih Mod Sebutan Belajar -->
                     <div class="learn-mode-selector" id="learnModeSelectorContainer">
                         <button id="btnVoiceLetter" class="learn-mode-btn active" onclick="setLearnVoiceMode('letter')">
-                            <span data-ms="🔠 Sebut Huruf (A)" data-en="🔠 Say Letter (A)">🔠 Sebut Huruf (A)</span>
+                            <span data-ms="Aa Sebut Huruf (A)" data-en="Aa Say Letter (A)">Aa Sebut Huruf (A)</span>
                         </button>
                         <button id="btnVoiceWord" class="learn-mode-btn" onclick="setLearnVoiceMode('word')">
                             <span data-ms="🐔 Huruf & Perkataan" data-en="🐔 Letter & Word">🐔 Huruf & Perkataan</span>
@@ -144,13 +149,27 @@
                 <!-- ================= TAB 2: KUIZ ABC/123/JAWI ================= -->
                 <section id="tabContentQuiz" class="tab-content">
                     <div class="quiz-container">
-                        <!-- Pemilih Mod Kuiz (Hanya untuk ABC) -->
+                        <!-- Pemilih Mod Kuiz -->
                         <div class="quiz-mode-selector" id="quizModeSelector">
+                            <!-- ABC Modes -->
                             <button id="btnQuizUpper" class="quiz-mode-btn active" onclick="setQuizMode('upper')">
-                                <span data-ms="🔠 Huruf Besar" data-en="🔠 Uppercase">🔠 Huruf Besar</span>
+                                <span data-ms="A Huruf Besar" data-en="A Uppercase">A Huruf Besar</span>
                             </button>
                             <button id="btnQuizLower" class="quiz-mode-btn" onclick="setQuizMode('lower')">
-                                <span data-ms="🔡 Huruf Kecil" data-en="🔡 Lowercase">🔡 Huruf Kecil</span>
+                                <span data-ms="a Huruf Kecil" data-en="a Lowercase">a Huruf Kecil</span>
+                            </button>
+                            <button id="btnQuizMissing" class="quiz-mode-btn" onclick="setQuizMode('missing')">
+                                <span data-ms="❓ Huruf Hilang" data-en="❓ Missing Letter">❓ Huruf Hilang</span>
+                            </button>
+                            <button id="btnQuizAnagram" class="quiz-mode-btn" onclick="setQuizMode('anagram')">
+                                <span data-ms="🧩 Susun Huruf" data-en="🧩 Anagram">🧩 Susun Huruf</span>
+                            </button>
+                            <!-- Syllable Modes -->
+                            <button id="btnQuizSylStd" class="quiz-mode-btn" onclick="setQuizMode('upper')" style="display:none;">
+                                <span data-ms="🗣️ Cari Suku Kata" data-en="🗣️ Find Syllable">🗣️ Cari Suku Kata</span>
+                            </button>
+                            <button id="btnQuizSplit" class="quiz-mode-btn" onclick="setQuizMode('split')" style="display:none;">
+                                <span data-ms="🧩 Suku Kata Pecah" data-en="🧩 Split Syllable">🧩 Suku Kata Pecah</span>
                             </button>
                         </div>
 
@@ -183,6 +202,12 @@
                                 <button class="option-btn">B</button>
                                 <button class="option-btn">C</button>
                                 <button class="option-btn">D</button>
+                            </div>
+
+                            <!-- Kawasan Anagram (Susun Huruf) - Tersembunyi secara lalai -->
+                            <div class="anagram-quiz-area" id="anagramArea" style="display:none;">
+                                <div class="anagram-answer-slots" id="anagramSlots"></div>
+                                <div class="anagram-letter-pool" id="anagramPool"></div>
                             </div>
                         </div>
 
