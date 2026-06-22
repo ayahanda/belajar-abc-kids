@@ -221,6 +221,7 @@ let lastY = 0;
 let strokeColor = '#FF5A5F';
 let brushSize = 20;
 let isEraser = false;
+let hasDrawnOnCanvas = false;
 
 // Kitaran Warna Kad ABC
 const cardColors = ['c-pink', 'c-blue', 'c-green', 'c-yellow', 'c-orange', 'c-purple'];
@@ -248,6 +249,9 @@ window.addEventListener('DOMContentLoaded', () => {
     // Terjemahkan elemen statik berdasarkan bahasa lalai
     updateStaticTranslations();
     updateModeSelectorLabels();
+
+    // Inisialisasi Profil & Pencapaian Anak
+    ProfileManager.init();
 });
 
 // ================= INI: GELEMBUNG BELON LATAR BELAKANG =================
@@ -570,6 +574,17 @@ function openDetail(index) {
     
     // Mainkan suara secara automatik semasa membuka kad
     playFullSpeech();
+
+    // Berikan markah pembelajaran
+    let itemKey = '';
+    if (isAbc) itemKey = item.letter;
+    else if (is123) itemKey = item.number;
+    else if (isJawi) itemKey = item.letter;
+    else if (isSyllable) itemKey = item.syllable;
+    
+    if (itemKey) {
+        AchievementManager.awardLearnXP(currentCategory, itemKey);
+    }
 }
 
 // Tutup kad besar terperinci
@@ -1423,6 +1438,9 @@ function checkAnagramAnswer() {
         quizScore++;
         document.getElementById('quizScore').textContent = quizScore;
         playSynthSound('success');
+        
+        // Tambah markah kuiz global
+        AchievementManager.awardQuizXP(currentCategory);
         feedbackEmoji.textContent = '🌟';
         feedback.className = 'quiz-feedback correct';
         feedbackText.textContent = currentLanguage === 'ms' ? 'Hebat! Betul!' : 'Great job! Correct!';
@@ -1601,6 +1619,9 @@ function checkQuizAnswer(selectedLetter, buttonElement) {
         document.getElementById('quizScore').textContent = quizScore;
         buttonElement.classList.add('btn-correct');
         playSynthSound('success');
+        
+        // Tambah markah kuiz global
+        AchievementManager.awardQuizXP(currentCategory);
         
         // Puji dalam bahasa yang dipilih
         feedbackEmoji.textContent = '🌟';
@@ -1827,6 +1848,7 @@ function stopDrawing() {
 
 // Lukis Garisan pada Kanvas
 function drawStroke(x1, y1, x2, y2) {
+    hasDrawnOnCanvas = true;
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
@@ -1865,6 +1887,7 @@ function updateBrushSize(size) {
 // Padam seluruh kanvas lakaran
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasDrawnOnCanvas = false;
     playSynthSound('click');
 }
 
@@ -1879,6 +1902,8 @@ function showScreen(screenId) {
     document.getElementById('screenMainMenu').style.display = (screenId === 'main') ? 'flex' : 'none';
     document.getElementById('screenCategoryMenu').style.display = (screenId === 'category') ? 'flex' : 'none';
     document.getElementById('screenGameplay').style.display = (screenId === 'content') ? 'flex' : 'none';
+    document.getElementById('screenGamesMenu').style.display = (screenId === 'games') ? 'flex' : 'none';
+    document.getElementById('screenMiniGame').style.display = (screenId === 'minigame') ? 'flex' : 'none';
 
     // Jika masuk ke skrin gameplay, setkan tab kandungan yang aktif
     if (screenId === 'content') {
@@ -2191,4 +2216,1430 @@ function updateQuizModeButtons() {
         selector.style.display = (isAbc || isSyllable) ? 'grid' : 'none';
     }
 }
+
+// =========================================================================
+// ==================== SISTEM PROFIL ANAK & PENCAPAIAN ====================
+// =========================================================================
+
+// Senarai Avatar Kartun berasaskan Jantina
+const boyAvatars = ['👦', '🦁', '🦖', '🐼', '🦊', '🐻', '🐵', '⚽', '🎒', '🚗'];
+const girlAvatars = ['👧', '🦄', '🐰', '🐱', '🦋', '🐥', '🌸', '👑', '🎈', '🎨'];
+
+// Helper Animasi Confetti Global untuk Overlay & Modal
+function triggerGlobalConfettiEffect() {
+    const stars = ['⭐️', '✨', '🎉', '🏆', '🌟', '🍬', '🎈'];
+    const body = document.body;
+    
+    for (let i = 0; i < 30; i++) {
+        const star = document.createElement('div');
+        star.textContent = stars[Math.floor(Math.random() * stars.length)];
+        star.style.position = 'fixed';
+        star.style.left = `${Math.random() * 80 + 10}dvw`;
+        star.style.top = `${Math.random() * 40 + 30}dvh`;
+        star.style.fontSize = `${Math.random() * 20 + 20}px`;
+        star.style.zIndex = '9999';
+        star.style.pointerEvents = 'none';
+        star.style.transform = `scale(0)`;
+        star.style.transition = 'all 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        
+        body.appendChild(star);
+        
+        // Animasi keluar
+        setTimeout(() => {
+            star.style.transform = `scale(1.8) translate(${(Math.random() - 0.5) * 200}px, ${(Math.random() - 0.8) * 300}px)`;
+            star.style.opacity = '0';
+        }, 50);
+        
+        // Padam unsur selepas selesai
+        setTimeout(() => {
+            star.remove();
+        }, 1300);
+    }
+}
+
+// 1. PENGURUS PROFIL ANAK (ProfileManager)
+const ProfileManager = {
+    currentProfile: null,
+    selectedGender: 'boy',
+    selectedAvatar: '',
+
+    init() {
+        const savedProfile = localStorage.getItem('kid_profile');
+        if (savedProfile) {
+            try {
+                this.currentProfile = JSON.parse(savedProfile);
+                this.displayProfileWidget();
+                AchievementManager.init();
+            } catch (e) {
+                console.error("Ralat memuatkan profil:", e);
+                this.openProfileModal(false);
+            }
+        } else {
+            // Pertama kali buka, tunjuk modal
+            this.openProfileModal(false);
+        }
+    },
+
+    openProfileModal(isEdit = false) {
+        const modal = document.getElementById('profileModal');
+        const titleEl = document.getElementById('profileModalTitle');
+        const nameInput = document.getElementById('profileNameInput');
+        const ageSelect = document.getElementById('profileAgeSelect');
+        const saveBtn = document.getElementById('btnSaveProfile');
+        const closeBtn = document.getElementById('closeProfileBtn');
+        
+        if (isEdit && this.currentProfile) {
+            titleEl.textContent = currentLanguage === 'ms' ? 'Kemaskini Profil Anak ✏️' : 'Edit Kid Profile ✏️';
+            saveBtn.textContent = currentLanguage === 'ms' ? 'Simpan Perubahan 💾' : 'Save Changes 💾';
+            if (closeBtn) closeBtn.style.display = 'flex';
+            
+            nameInput.value = this.currentProfile.name || '';
+            ageSelect.value = this.currentProfile.age || '5';
+            this.selectedGender = this.currentProfile.gender || 'boy';
+            this.selectedAvatar = this.currentProfile.avatar || '';
+        } else {
+            titleEl.textContent = currentLanguage === 'ms' ? 'Cipta Profil Anak 🚀' : 'Create Kid Profile 🚀';
+            saveBtn.textContent = currentLanguage === 'ms' ? 'Mula Belajar! 🚀' : 'Start Learning! 🚀';
+            if (closeBtn) closeBtn.style.display = 'none';
+            
+            nameInput.value = '';
+            ageSelect.value = '5';
+            this.selectedGender = 'boy';
+            this.selectedAvatar = '';
+        }
+
+        // Tunjukkan jantina aktif
+        document.getElementById('btnGenderBoy').classList.toggle('active', this.selectedGender === 'boy');
+        document.getElementById('btnGenderGirl').classList.toggle('active', this.selectedGender === 'girl');
+
+        this.renderAvatars();
+        modal.style.display = 'flex';
+    },
+
+    setGender(gender) {
+        this.selectedGender = gender;
+        document.getElementById('btnGenderBoy').classList.toggle('active', gender === 'boy');
+        document.getElementById('btnGenderGirl').classList.toggle('active', gender === 'girl');
+        this.renderAvatars();
+        playSynthSound('click');
+    },
+
+    renderAvatars() {
+        const container = document.getElementById('avatarGridContainer');
+        container.innerHTML = '';
+        
+        const list = this.selectedGender === 'boy' ? boyAvatars : girlAvatars;
+        
+        if (!this.selectedAvatar || !list.includes(this.selectedAvatar)) {
+            this.selectedAvatar = list[0];
+        }
+
+        list.forEach(emoji => {
+            const item = document.createElement('div');
+            item.className = 'avatar-item';
+            if (emoji === this.selectedAvatar) {
+                item.classList.add('selected');
+            }
+            item.textContent = emoji;
+            item.onclick = () => {
+                document.querySelectorAll('.avatar-item').forEach(el => el.classList.remove('selected'));
+                item.classList.add('selected');
+                this.selectedAvatar = emoji;
+                playSynthSound('click');
+            };
+            container.appendChild(item);
+        });
+    },
+
+    saveProfile() {
+        const nameInput = document.getElementById('profileNameInput');
+        const name = nameInput.value.trim();
+        const ageSelect = document.getElementById('profileAgeSelect');
+        const age = ageSelect.value;
+
+        if (!name) {
+            playSynthSound('error');
+            alert(currentLanguage === 'ms' ? 'Sila masukkan nama anak!' : 'Please enter the kid\'s name!');
+            return;
+        }
+
+        this.currentProfile = {
+            name: name,
+            age: age,
+            gender: this.selectedGender,
+            avatar: this.selectedAvatar
+        };
+
+        localStorage.setItem('kid_profile', JSON.stringify(this.currentProfile));
+        playSynthSound('success');
+        triggerGlobalConfettiEffect();
+
+        // Tutup modal
+        document.getElementById('profileModal').style.display = 'none';
+
+        // Kemaskini paparan profil
+        this.displayProfileWidget();
+        
+        // Inisialisasi Pencapaian
+        AchievementManager.init();
+    },
+
+    displayProfileWidget() {
+        if (!this.currentProfile) return;
+        const row = document.getElementById('headerBottomRow');
+        const avatarEl = document.getElementById('headerAvatar');
+        const nameEl = document.getElementById('headerName');
+        
+        avatarEl.textContent = this.currentProfile.avatar;
+        nameEl.textContent = this.currentProfile.name;
+        row.style.display = 'flex';
+    }
+};
+
+// 2. PENGURUS PENCAPAIAN & MARKAH (AchievementManager)
+const AchievementManager = {
+    data: {
+        scores: { abc: 0, num: 0, syllable: 0, jawi: 0, trace: 0 },
+        learntItems: { abc: [], num: [], syllable: [], jawi: [] },
+        tracedLetters: [],
+        unlockedBadges: []
+    },
+
+    badges: [
+        { id: 'early_explorer_abc', name: { ms: 'Peneroka Awal ABC', en: 'Early Explorer ABC' }, desc: { ms: 'Belajar 5 huruf ABC pertama', en: 'Learn first 5 letters of ABC' }, emoji: '🐣', cat: 'abc' },
+        { id: 'master_az', name: { ms: 'Pakar A-Z', en: 'A-Z Master' }, desc: { ms: 'Belajar kesemua 26 huruf', en: 'Learn all 26 letters of ABC' }, emoji: '🎓', cat: 'abc' },
+        { id: 'quiz_star_abc', name: { ms: 'Bintang Kuiz ABC', en: 'ABC Quiz Star' }, desc: { ms: 'Kumpul 100 XP dari Kuiz ABC', en: 'Earn 100 XP from ABC Quizzes' }, emoji: '🏆', cat: 'abc' },
+        
+        { id: 'number_friend', name: { ms: 'Kawan Nombor', en: 'Number Friend' }, desc: { ms: 'Belajar nombor 1 hingga 5', en: 'Learn numbers 1 to 5' }, emoji: '🔢', cat: 'num' },
+        { id: 'counting_master', name: { ms: 'Pakar Mengira', en: 'Counting Master' }, desc: { ms: 'Belajar nombor 1 hingga 10', en: 'Learn numbers 1 to 10' }, emoji: '🧮', cat: 'num' },
+        { id: 'quiz_star_123', name: { ms: 'Bintang Kuiz 123', en: '123 Quiz Star' }, desc: { ms: 'Kumpul 100 XP dari Kuiz 123', en: 'Earn 100 XP from 123 Quizzes' }, emoji: '🥇', cat: 'num' },
+        
+        { id: 'syllable_speller', name: { ms: 'Pengeja Cilik', en: 'Little Speller' }, desc: { ms: 'Belajar 5 suku kata pertama', en: 'Learn first 5 syllables' }, emoji: '🗣️', cat: 'syllable' },
+        { id: 'syllable_champ', name: { ms: 'Juara Suku Kata', en: 'Syllable Champ' }, desc: { ms: 'Kumpul 100 XP dari Kuiz Suku Kata', en: 'Earn 100 XP from Syllable Quizzes' }, emoji: '🎖️', cat: 'syllable' },
+        
+        { id: 'jawi_lover', name: { ms: 'Pencinta Jawi', en: 'Jawi Lover' }, desc: { ms: 'Belajar 5 huruf Jawi pertama', en: 'Learn first 5 Jawi letters' }, emoji: '🕌', cat: 'jawi' },
+        { id: 'jawi_master', name: { ms: 'Pakar Alif Ba Ta', en: 'Alif Ba Ta Master' }, desc: { ms: 'Belajar semua huruf Jawi', en: 'Learn all Jawi letters' }, emoji: '🌙', cat: 'jawi' },
+        
+        { id: 'young_artist', name: { ms: 'Pelukis Muda', en: 'Young Artist' }, desc: { ms: 'Selesai melakar 5 huruf', en: 'Complete tracing 5 letters' }, emoji: '🎨', cat: 'trace' },
+        { id: 'tracing_pro', name: { ms: 'Pakar Melakar', en: 'Tracing Pro' }, desc: { ms: 'Selesai melakar 15 huruf', en: 'Complete tracing 15 letters' }, emoji: '✏️', cat: 'trace' }
+    ],
+
+    init() {
+        const savedData = localStorage.getItem('achievement_data');
+        if (savedData) {
+            try {
+                this.data = JSON.parse(savedData);
+                if (!this.data.scores) this.data.scores = { abc: 0, num: 0, syllable: 0, jawi: 0, trace: 0 };
+                if (!this.data.learntItems) this.data.learntItems = { abc: [], num: [], syllable: [], jawi: [] };
+                if (!this.data.tracedLetters) this.data.tracedLetters = [];
+                if (!this.data.unlockedBadges) this.data.unlockedBadges = [];
+            } catch (e) {
+                console.error("Ralat memuatkan data pencapaian:", e);
+            }
+        } else {
+            this.resetLocalData();
+        }
+        this.checkBadges(false);
+    },
+
+    resetLocalData() {
+        this.data = {
+            scores: { abc: 0, num: 0, syllable: 0, jawi: 0, trace: 0 },
+            learntItems: { abc: [], num: [], syllable: [], jawi: [] },
+            tracedLetters: [],
+            unlockedBadges: []
+        };
+        this.save();
+    },
+
+    save() {
+        localStorage.setItem('achievement_data', JSON.stringify(this.data));
+    },
+
+    getTotalXP() {
+        return Object.values(this.data.scores).reduce((a, b) => a + b, 0);
+    },
+
+    awardLearnXP(category, itemKey) {
+        let catKey = category === '123' ? 'num' : category;
+        if (!this.data.learntItems[catKey]) {
+            this.data.learntItems[catKey] = [];
+        }
+        
+        if (!this.data.learntItems[catKey].includes(itemKey)) {
+            this.data.learntItems[catKey].push(itemKey);
+            this.data.scores[catKey] += 10;
+            this.save();
+            this.checkBadges(true);
+        }
+    },
+
+    awardQuizXP(category) {
+        let catKey = 'abc';
+        if (category === '123') catKey = 'num';
+        else if (category === 'syllable') catKey = 'syllable';
+        else if (category === 'jawi') catKey = 'jawi';
+
+        this.data.scores[catKey] += 20;
+        this.save();
+        this.checkBadges(true);
+    },
+
+    awardTraceXP(letterKey) {
+        if (!this.data.tracedLetters.includes(letterKey)) {
+            this.data.tracedLetters.push(letterKey);
+        }
+        this.data.scores.trace += 15;
+        this.save();
+        
+        // Kesan visual & bunyi kejayaan lakar
+        playSynthSound('success');
+        triggerGlobalConfettiEffect();
+        
+        this.checkBadges(true);
+    },
+
+    checkBadges(shouldShowAlert = true) {
+        let newlyUnlocked = [];
+
+        // 1. ABC Badges
+        if (this.data.learntItems.abc.length >= 5 && !this.data.unlockedBadges.includes('early_explorer_abc')) {
+            newlyUnlocked.push('early_explorer_abc');
+        }
+        if (this.data.learntItems.abc.length >= 26 && !this.data.unlockedBadges.includes('master_az')) {
+            newlyUnlocked.push('master_az');
+        }
+        if (this.data.scores.abc >= 100 && !this.data.unlockedBadges.includes('quiz_star_abc')) {
+            newlyUnlocked.push('quiz_star_abc');
+        }
+
+        // 2. 123 Badges
+        if (this.data.learntItems.num.length >= 5 && !this.data.unlockedBadges.includes('number_friend')) {
+            newlyUnlocked.push('number_friend');
+        }
+        if (this.data.learntItems.num.length >= 10 && !this.data.unlockedBadges.includes('counting_master')) {
+            newlyUnlocked.push('counting_master');
+        }
+        if (this.data.scores.num >= 100 && !this.data.unlockedBadges.includes('quiz_star_123')) {
+            newlyUnlocked.push('quiz_star_123');
+        }
+
+        // 3. Syllable Badges
+        if (this.data.learntItems.syllable.length >= 5 && !this.data.unlockedBadges.includes('syllable_speller')) {
+            newlyUnlocked.push('syllable_speller');
+        }
+        if (this.data.scores.syllable >= 100 && !this.data.unlockedBadges.includes('syllable_champ')) {
+            newlyUnlocked.push('syllable_champ');
+        }
+
+        // 4. Jawi Badges
+        if (this.data.learntItems.jawi.length >= 5 && !this.data.unlockedBadges.includes('jawi_lover')) {
+            newlyUnlocked.push('jawi_lover');
+        }
+        if (this.data.learntItems.jawi.length >= 28 && !this.data.unlockedBadges.includes('jawi_master')) { // jawiData length
+            newlyUnlocked.push('jawi_master');
+        }
+
+        // 5. Tracing Badges
+        if (this.data.tracedLetters.length >= 5 && !this.data.unlockedBadges.includes('young_artist')) {
+            newlyUnlocked.push('young_artist');
+        }
+        if (this.data.tracedLetters.length >= 15 && !this.data.unlockedBadges.includes('tracing_pro')) {
+            newlyUnlocked.push('tracing_pro');
+        }
+
+        if (newlyUnlocked.length > 0) {
+            newlyUnlocked.forEach(badgeId => {
+                this.data.unlockedBadges.push(badgeId);
+                if (shouldShowAlert) {
+                    const badge = this.badges.find(b => b.id === badgeId);
+                    setTimeout(() => {
+                        this.showBadgeUnlockPopup(badge);
+                    }, 500);
+                }
+            });
+            this.save();
+        }
+    },
+
+    showBadgeUnlockPopup(badge) {
+        playSynthSound('success');
+        triggerGlobalConfettiEffect();
+        
+        const banner = document.createElement('div');
+        banner.style.position = 'fixed';
+        banner.style.top = '20%';
+        banner.style.left = '50%';
+        banner.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        banner.style.backgroundColor = '#fffdf0';
+        banner.style.border = '5px solid #ffa500';
+        banner.style.borderRadius = '24px';
+        banner.style.padding = '18px 24px';
+        banner.style.zIndex = '99999';
+        banner.style.boxShadow = '0 10px 25px rgba(0,0,0,0.2)';
+        banner.style.textAlign = 'center';
+        banner.style.width = '80%';
+        banner.style.maxWidth = '320px';
+        banner.style.opacity = '0';
+        banner.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        
+        const title = currentLanguage === 'ms' ? 'Lencana Baru Dinyahkunci! 🌟' : 'New Badge Unlocked! 🌟';
+        const badgeName = currentLanguage === 'ms' ? badge.name.ms : badge.name.en;
+        
+        banner.innerHTML = `
+            <div style="font-size: 52px; margin-bottom: 8px; animation: bounce 0.8s infinite;">${badge.emoji}</div>
+            <h3 style="color: #b7791f; font-family: var(--font-primary); font-size: 14px; margin: 4px 0;">${title}</h3>
+            <h2 style="color: var(--text-dark); font-family: var(--font-primary); font-size: 18px; margin: 6px 0;">${badgeName}</h2>
+        `;
+        
+        document.body.appendChild(banner);
+        
+        setTimeout(() => {
+            banner.style.opacity = '1';
+            banner.style.transform = 'translate(-50%, -50%) scale(1)';
+        }, 100);
+        
+        setTimeout(() => {
+            banner.style.opacity = '0';
+            banner.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            setTimeout(() => banner.remove(), 450);
+        }, 3800);
+    },
+
+    updateDashboardUI() {
+        if (!ProfileManager.currentProfile) return;
+        
+        document.getElementById('achieveAvatar').textContent = ProfileManager.currentProfile.avatar;
+        document.getElementById('achieveName').textContent = ProfileManager.currentProfile.name;
+        document.getElementById('achieveAge').textContent = ProfileManager.currentProfile.age;
+        
+        document.getElementById('achieveTotalPoints').textContent = this.getTotalXP();
+        
+        const targetXP = 150; // target limit bagi bar visual
+        
+        const skills = [
+            { id: 'pbAbc', textId: 'scoreAbcText', val: this.data.scores.abc },
+            { id: 'pbNum', textId: 'scoreNumText', val: this.data.scores.num },
+            { id: 'pbSyllable', textId: 'scoreSyllableText', val: this.data.scores.syllable },
+            { id: 'pbJawi', textId: 'scoreJawiText', val: this.data.scores.jawi },
+            { id: 'pbTrace', textId: 'scoreTraceText', val: this.data.scores.trace }
+        ];
+
+        skills.forEach(s => {
+            const bar = document.getElementById(s.id);
+            const text = document.getElementById(s.textId);
+            const pct = Math.min((s.val / targetXP) * 100, 100);
+            
+            if (bar) bar.style.width = `${pct}%`;
+            if (text) text.textContent = `${s.val} XP`;
+        });
+
+        // Set lencana grid
+        const grid = document.getElementById('badgesGridContainer');
+        grid.innerHTML = '';
+
+        this.badges.forEach(b => {
+            const isUnlocked = this.data.unlockedBadges.includes(b.id);
+            const name = currentLanguage === 'ms' ? b.name.ms : b.name.en;
+            const desc = currentLanguage === 'ms' ? b.desc.ms : b.desc.en;
+            
+            const badgeEl = document.createElement('div');
+            badgeEl.className = 'badge-item';
+            if (!isUnlocked) {
+                badgeEl.classList.add('locked');
+            } else {
+                badgeEl.classList.add('badge-unlocked-effect');
+            }
+            
+            badgeEl.innerHTML = `
+                <span class="badge-emoji">${b.emoji}</span>
+                <span class="badge-name">${name}</span>
+                <span class="badge-desc">${desc}</span>
+            `;
+            grid.appendChild(badgeEl);
+        });
+    }
+};
+
+// 3. FUNGSI CALLBACK GLOBAL & WINDOW LISTENER
+function setProfileGender(gender) {
+    ProfileManager.setGender(gender);
+}
+
+function saveProfileData() {
+    ProfileManager.saveProfile();
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+    playSynthSound('click');
+}
+
+function openAchievementModal() {
+    AchievementManager.updateDashboardUI();
+    document.getElementById('achievementModal').style.display = 'flex';
+    playSynthSound('click');
+}
+
+function closeAchievementModal(event) {
+    if (event === null || event.target.id === 'achievementModal' || event.target.className === 'close-overlay') {
+        document.getElementById('achievementModal').style.display = 'none';
+        playSynthSound('click');
+    }
+}
+
+// Papan melakar selesai lakar
+function completeTracing() {
+    if (!hasDrawnOnCanvas) {
+        playSynthSound('error');
+        alert(currentLanguage === 'ms' 
+            ? 'Lakarkan dahulu huruf di atas papan sebelum selesai!' 
+            : 'Trace the letter on the board first!');
+        return;
+    }
+    
+    const val = document.getElementById('traceLetterSelect').value;
+    AchievementManager.awardTraceXP(val);
+    clearCanvas();
+}
+
+// Parental Gate Pintu Reset
+let parentGateAnswerVal = 0;
+
+function showParentalGate() {
+    const box = document.getElementById('parentalGateContainer');
+    const qEl = document.getElementById('parentalGateQuestion');
+    const ansInput = document.getElementById('parentalGateAnswer');
+    
+    // Soalan matematik mudah (cth: 2 hingga 9)
+    const a = Math.floor(Math.random() * 8) + 2;
+    const b = Math.floor(Math.random() * 8) + 2;
+    parentGateAnswerVal = a + b;
+    
+    qEl.textContent = `${a} + ${b} = ?`;
+    ansInput.value = '';
+    
+    box.style.display = 'block';
+    playSynthSound('click');
+}
+
+function hideParentalGate() {
+    document.getElementById('parentalGateContainer').style.display = 'none';
+    playSynthSound('click');
+}
+
+function verifyParentalGateAnswer() {
+    const inputVal = parseInt(document.getElementById('parentalGateAnswer').value);
+    
+    if (inputVal === parentGateAnswerVal) {
+        playSynthSound('success');
+        
+        localStorage.removeItem('kid_profile');
+        localStorage.removeItem('achievement_data');
+        
+        ProfileManager.currentProfile = null;
+        AchievementManager.resetLocalData();
+        
+        document.getElementById('achievementModal').style.display = 'none';
+        document.getElementById('parentalGateContainer').style.display = 'none';
+        document.getElementById('headerBottomRow').style.display = 'none';
+        
+        alert(currentLanguage === 'ms' 
+            ? 'Semua data profil & kemajuan telah diset semula!' 
+            : 'All profile and progress records have been reset!');
+        
+        ProfileManager.init();
+    } else {
+        playSynthSound('error');
+        alert(currentLanguage === 'ms' 
+            ? 'Jawapan salah! Hanya untuk Ibu Bapa sahaja.' 
+            : 'Wrong answer! Parents verification failed.');
+    }
+}
+
+
+// ================= PERMAINAN KHAS (MINI GAMES) =================
+
+// Fungsi Navigasi ke Menu Permainan
+function openGamesMenu() {
+    playSynthSound('click');
+    showScreen('games');
+}
+
+// Pengurus Utama Mini Game
+const MiniGameManager = {
+    currentGame: null,
+    gameScore: 0,
+    gameRound: 0,
+    maxRounds: 10,
+    _cdLevel: 1,
+    _mmLevel: 1,
+
+    getGameDescriptionHtml(gameId) {
+        const desc = {
+            firstLetter: {
+                ms: "Pilih huruf pertama bagi gambar dan perkataan yang dipaparkan.",
+                en: "Choose the first letter for the displayed picture and word."
+            },
+            memoryMatch: {
+                ms: "Cari dan padankan kad huruf dengan kad gambar emoji yang betul.",
+                en: "Find and match the letter cards with the correct emoji picture cards."
+            },
+            singAlong: {
+                ms: "Dengar nyanyian lagu ABC dan ikut sebut huruf-huruf yang menyala.",
+                en: "Listen to the ABC song and read along with the highlighted letters."
+            },
+            abcOrder: {
+                ms: "Klik huruf rawak di bawah untuk menyusunnya mengikut urutan ABC yang betul.",
+                en: "Click the scrambled letters below to arrange them in the correct ABC order."
+            },
+            listenChoose: {
+                ms: "Dengar sebutan suara huruf, kemudian pilih huruf yang betul dari pilihan yang ada.",
+                en: "Listen to the letter pronunciation, then pick the correct letter from the choices."
+            },
+            speedChallenge: {
+                ms: "Tekan emoji perkataan yang bermula dengan huruf yang dipapar secepat mungkin sebelum masa tamat!",
+                en: "Tap the word emoji starting with the displayed letter as fast as you can before time runs out!"
+            },
+            connectDots: {
+                ms: "Klik titik-titik mengikut urutan huruf dari awal hingga akhir untuk menghasilkan garisan sambungan.",
+                en: "Click the dots in alphabetical order from start to end to connect the lines."
+            },
+            upperLowerMatch: {
+                ms: "Pilih satu huruf besar di baris atas dan padankan dengan huruf kecilnya di baris bawah.",
+                en: "Select an uppercase letter in the top row and match it with its lowercase counterpart in the bottom row."
+            }
+        };
+
+        const text = desc[gameId] ? desc[gameId][currentLanguage] : '';
+        const title = currentLanguage === 'ms' ? 'Cara Main' : 'How to Play';
+
+        return `
+            <div class="mg-instruction-box">
+                <span class="mg-instruction-icon">💡</span>
+                <div class="mg-instruction-content">
+                    <strong class="mg-instruction-title">${title}</strong>
+                    <p class="mg-instruction-text">${text}</p>
+                </div>
+            </div>
+        `;
+    },
+
+    openGame(gameId) {
+        this.currentGame = gameId;
+        this.gameScore = 0;
+        this.gameRound = 0;
+        playSynthSound('click');
+
+        // Set tajuk permainan
+        const titles = {
+            firstLetter: { ms: '🖼️ Huruf Pertama', en: '🖼️ First Letter' },
+            memoryMatch: { ms: '🃏 Memori Match', en: '🃏 Memory Match' },
+            singAlong: { ms: '🎵 Nyanyi ABC', en: '🎵 Sing ABC' },
+            abcOrder: { ms: '🔤 Susun Urutan', en: '🔤 ABC Order' },
+            listenChoose: { ms: '👂 Dengar & Pilih', en: '👂 Listen & Choose' },
+            speedChallenge: { ms: '⏱️ Cabaran Masa', en: '⏱️ Speed Challenge' },
+            connectDots: { ms: '🔗 Sambung Titik', en: '🔗 Connect Dots' },
+            upperLowerMatch: { ms: '🧩 Padanan Huruf', en: '🧩 Letter Matching' }
+        };
+        document.getElementById('miniGameTitle').textContent = titles[gameId][currentLanguage];
+        this.updateScoreDisplay();
+
+        showScreen('minigame');
+        this.initGame(gameId);
+    },
+
+    closeGame() {
+        playSynthSound('click');
+        // Bersihkan timer jika ada
+        if (this._speedTimer) { clearInterval(this._speedTimer); this._speedTimer = null; }
+        if (this._singTimer) { clearTimeout(this._singTimer); this._singTimer = null; }
+        this.currentGame = null;
+        showScreen('games');
+    },
+
+    updateScoreDisplay() {
+        const el = document.getElementById('miniGameScoreDisplay');
+        if (el) el.textContent = `⭐ ${this.gameScore}`;
+    },
+
+    initGame(gameId) {
+        const area = document.getElementById('miniGameArea');
+        area.innerHTML = '';
+        // Reset timer jika ada
+        if (this._speedTimer) { clearInterval(this._speedTimer); this._speedTimer = null; }
+        if (this._singTimer) { clearTimeout(this._singTimer); this._singTimer = null; }
+
+        switch(gameId) {
+            case 'firstLetter': this.initFirstLetter(area); break;
+            case 'memoryMatch': this.initMemoryMatch(area); break;
+            case 'singAlong': this.initSingAlong(area); break;
+            case 'abcOrder': this.initAbcOrder(area); break;
+            case 'listenChoose': this.initListenChoose(area); break;
+            case 'speedChallenge': this.initSpeedChallenge(area); break;
+            case 'connectDots': this.initConnectDots(area); break;
+            case 'upperLowerMatch': this.initUpperLowerMatch(area); break;
+        }
+    },
+
+    // ---- GAME 1: Huruf Pertama (First Letter) ----
+    initFirstLetter(area) {
+        this.gameRound = 0;
+        this.gameScore = 0;
+        this.updateScoreDisplay();
+        this._flNextRound(area);
+    },
+
+    _flNextRound(area) {
+        if (this.gameRound >= this.maxRounds) {
+            this._showGameComplete(area);
+            return;
+        }
+        this.gameRound++;
+
+        // Pilih huruf rawak
+        const correctItem = abcData[Math.floor(Math.random() * abcData.length)];
+        const lang = currentLanguage;
+        const correctLetter = correctItem.letter;
+
+        // Buat 3 pilihan salah
+        let options = [correctLetter];
+        while (options.length < 4) {
+            const rand = abcData[Math.floor(Math.random() * abcData.length)].letter;
+            if (!options.includes(rand)) options.push(rand);
+        }
+        options = options.sort(() => Math.random() - 0.5);
+
+        area.innerHTML = `
+            <div class="mg-status-text">${currentLanguage === 'ms' ? 'Soalan' : 'Question'} ${this.gameRound}/${this.maxRounds}</div>
+            <div class="fl-emoji-display">${correctItem[lang].emoji}</div>
+            <div class="fl-word-display">${correctItem[lang].word.toUpperCase()}</div>
+            <div class="fl-options-grid">
+                ${options.map(opt => `<button class="fl-option-btn" onclick="MiniGameManager._flCheckAnswer(this, '${opt}', '${correctLetter}')">${opt}</button>`).join('')}
+            </div>
+            ${this.getGameDescriptionHtml('firstLetter')}
+        `;
+    },
+
+    _flCheckAnswer(btn, chosen, correct) {
+        const area = document.getElementById('miniGameArea');
+        const allBtns = area.querySelectorAll('.fl-option-btn');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+        if (chosen === correct) {
+            btn.classList.add('correct');
+            this.gameScore += 20;
+            this.updateScoreDisplay();
+            playSynthSound('success');
+            AchievementManager.awardQuizXP('abc');
+        } else {
+            btn.classList.add('wrong');
+            allBtns.forEach(b => { if (b.textContent === correct) b.classList.add('correct'); });
+            playSynthSound('error');
+        }
+        setTimeout(() => this._flNextRound(area), 1200);
+    },
+
+    // ---- GAME 2: Memory Match ----
+    _mmFlipped: [],
+    _mmMatched: 0,
+    _mmLocked: false,
+    _mmLevel: 1,
+    initMemoryMatch(area) {
+        this.showMmLevelSelection(area);
+    },
+
+    showMmLevelSelection(area) {
+        area.innerHTML = `
+            <div class="mg-status-text" style="margin-bottom: 20px;">${currentLanguage === 'ms' ? 'Pilih Tahap Memori Match' : 'Select Memory Match Level'}</div>
+            <div style="display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 300px; margin: 0 auto;">
+                <button class="sa-play-btn" style="background: linear-gradient(135deg, #6bcb77, #26de81); margin: 0;" onclick="MiniGameManager.startMmLevel(1)">⭐ ${currentLanguage === 'ms' ? 'Tahap 1: 6 Kotak' : 'Level 1: 6 Boxes'}</button>
+                <button class="sa-play-btn" style="background: linear-gradient(135deg, #fdcb6e, #e17055); margin: 0;" onclick="MiniGameManager.startMmLevel(2)">⭐ ${currentLanguage === 'ms' ? 'Tahap 2: 10 Kotak' : 'Level 2: 10 Boxes'}</button>
+                <button class="sa-play-btn" style="background: linear-gradient(135deg, #a29bfe, #6c5ce7); margin: 0;" onclick="MiniGameManager.startMmLevel(3)">⭐ ${currentLanguage === 'ms' ? 'Tahap 3: 12 Kotak' : 'Level 3: 12 Boxes'}</button>
+            </div>
+            ${this.getGameDescriptionHtml('memoryMatch')}
+        `;
+    },
+
+    startMmLevel(level) {
+        this._mmLevel = level;
+        this.gameScore = 0;
+        this._mmFlipped = [];
+        this._mmMatched = 0;
+        this._mmLocked = false;
+        this.updateScoreDisplay();
+
+        const area = document.getElementById('miniGameArea');
+        
+        let numPairs = 6;
+        let gridClass = 'mm-grid-level3';
+        if (level === 1) {
+            numPairs = 3;
+            gridClass = 'mm-grid-level1';
+        } else if (level === 2) {
+            numPairs = 5;
+            gridClass = 'mm-grid-level2';
+        } else if (level === 3) {
+            numPairs = 6;
+            gridClass = 'mm-grid-level3';
+        }
+
+        const shuffled = [...abcData].sort(() => Math.random() - 0.5).slice(0, numPairs);
+        const lang = currentLanguage;
+        let cards = [];
+        shuffled.forEach(item => {
+            cards.push({ id: item.letter + '_letter', pairId: item.letter, display: item.letter, type: 'letter' });
+            cards.push({ id: item.letter + '_emoji', pairId: item.letter, display: item[lang].emoji, type: 'emoji' });
+        });
+        cards = cards.sort(() => Math.random() - 0.5);
+
+        area.innerHTML = `
+            <div class="mg-status-text">${currentLanguage === 'ms' ? 'Tahap' : 'Level'} ${level}</div>
+            <div class="cd-instruction" style="margin-bottom:10px;">${currentLanguage === 'ms' ? 'Padankan huruf dengan emoji!' : 'Match letters with emojis!'}</div>
+            <div class="mm-grid ${gridClass}">
+                ${cards.map((card, i) => `<button class="mm-card" data-index="${i}" data-pair="${card.pairId}" data-display="${card.display}" onclick="MiniGameManager._mmFlipCard(this)">
+                </button>`).join('')}
+            </div>
+            ${this.getGameDescriptionHtml('memoryMatch')}
+        `;
+    },
+
+    _mmFlipCard(btn) {
+        if (this._mmLocked) return;
+        if (btn.classList.contains('flipped') || btn.classList.contains('matched')) return;
+
+        btn.classList.add('flipped');
+        btn.textContent = btn.dataset.display;
+        playSynthSound('click');
+        this._mmFlipped.push(btn);
+
+        if (this._mmFlipped.length === 2) {
+            this._mmLocked = true;
+            const [card1, card2] = this._mmFlipped;
+
+            if (card1.dataset.pair === card2.dataset.pair && card1.dataset.index !== card2.dataset.index) {
+                // Padan!
+                setTimeout(() => {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    this._mmMatched++;
+                    this.gameScore += 15;
+                    this.updateScoreDisplay();
+                    playSynthSound('success');
+                    AchievementManager.awardQuizXP('abc');
+                    this._mmFlipped = [];
+                    this._mmLocked = false;
+
+                    const targetMatched = this._mmLevel === 1 ? 3 : (this._mmLevel === 2 ? 5 : 6);
+                    if (this._mmMatched === targetMatched) {
+                        setTimeout(() => {
+                            triggerGlobalConfettiEffect();
+                            
+                            const area = document.getElementById('miniGameArea');
+                            
+                            let nextLevelBtn = '';
+                            if (this._mmLevel < 3) {
+                                const nextLvl = this._mmLevel + 1;
+                                nextLevelBtn = `<button class="mg-next-btn" onclick="MiniGameManager.startMmLevel(${nextLvl})">➡️ ${currentLanguage === 'ms' ? 'Tahap Seterusnya' : 'Next Level'}</button><br>`;
+                            }
+
+                            area.innerHTML = `
+                                <div class="sc-results">
+                                    <div style="font-size:4rem;">🏆</div>
+                                    <div class="sc-results-score">${currentLanguage === 'ms' ? 'Tahniah!' : 'Great Job!'}</div>
+                                    <div class="sc-results-label">${currentLanguage === 'ms' ? `Kamu berjaya selesaikan Tahap ${this._mmLevel}!` : `You completed Level ${this._mmLevel}!`}</div>
+                                    <div style="font-size:1.5rem; color:var(--color-accent-primary); margin-bottom:15px;">⭐ ${this.gameScore} XP</div>
+                                    ${nextLevelBtn}
+                                    <button class="mg-restart-btn" onclick="MiniGameManager.startMmLevel(${this._mmLevel})">🔄 ${currentLanguage === 'ms' ? 'Main Tahap Ini Lagi' : 'Play This Level Again'}</button>
+                                    <br>
+                                    <button class="mg-next-btn" style="background: linear-gradient(135deg, #a29bfe, #6c5ce7); margin-top:10px;" onclick="MiniGameManager.showMmLevelSelection(document.getElementById('miniGameArea'))">🗺️ ${currentLanguage === 'ms' ? 'Pilih Tahap Lain' : 'Select Other Level'}</button>
+                                    <br>
+                                    <button class="mg-next-btn" onclick="MiniGameManager.closeGame()" style="margin-top:10px;">🏠 ${currentLanguage === 'ms' ? 'Menu Permainan' : 'Games Menu'}</button>
+                                </div>
+                                ${this.getGameDescriptionHtml('memoryMatch')}
+                            `;
+                        }, 500);
+                    }
+                }, 400);
+            } else {
+                // Tidak padan
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card1.textContent = '';
+                    card2.classList.remove('flipped');
+                    card2.textContent = '';
+                    this._mmFlipped = [];
+                    this._mmLocked = false;
+                    playSynthSound('error');
+                }, 800);
+            }
+        }
+    },
+
+    // ---- GAME 3: Sing Along ----
+    _singTimer: null,
+    _singIndex: 0,
+    initSingAlong(area) {
+        this.gameScore = 0;
+        this._singIndex = 0;
+        if (this._singTimer) { clearTimeout(this._singTimer); this._singTimer = null; }
+        this.updateScoreDisplay();
+
+        area.innerHTML = `
+            <div class="sa-container">
+                <div class="mg-status-text">${currentLanguage === 'ms' ? 'Nyanyi bersama ABC! 🎶' : 'Sing along with ABC! 🎶'}</div>
+                <div class="sa-letter-grid">
+                    ${abcData.map((item, i) => `<div class="sa-letter" id="saLetter${i}">${item.letter}</div>`).join('')}
+                </div>
+                <button class="sa-play-btn" id="saPlayBtn" onclick="MiniGameManager._singStart()">▶ ${currentLanguage === 'ms' ? 'Mula Nyanyi!' : 'Start Singing!'}</button>
+            </div>
+            ${this.getGameDescriptionHtml('singAlong')}
+        `;
+    },
+
+    _singStart() {
+        const btn = document.getElementById('saPlayBtn');
+        if (btn) btn.disabled = true;
+        this._singIndex = 0;
+        // Reset semua huruf
+        for (let i = 0; i < 26; i++) {
+            const el = document.getElementById(`saLetter${i}`);
+            if (el) { el.classList.remove('active', 'done'); }
+        }
+        this._singNext();
+    },
+
+    _singNext() {
+        if (this._singIndex >= 26) {
+            // Selesai!
+            this.gameScore += 30;
+            this.updateScoreDisplay();
+            AchievementManager.awardQuizXP('abc');
+            triggerGlobalConfettiEffect();
+            playSynthSound('achievement');
+            const btn = document.getElementById('saPlayBtn');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = `🔄 ${currentLanguage === 'ms' ? 'Main Lagi!' : 'Play Again!'}`;
+            }
+            return;
+        }
+
+        // Highlight huruf semasa
+        const prev = document.getElementById(`saLetter${this._singIndex - 1}`);
+        if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
+
+        const curr = document.getElementById(`saLetter${this._singIndex}`);
+        if (curr) curr.classList.add('active');
+
+        // Sebut huruf menggunakan fungsi audio sedia ada
+        const letter = abcData[this._singIndex].letter;
+        playLetterSound(letter, currentLanguage);
+
+        this._singIndex++;
+        this._singTimer = setTimeout(() => this._singNext(), 750);
+    },
+
+    // ---- GAME 4: ABC Ordering ----
+    _aoLetters: [],
+    _aoAnswer: [],
+    _aoCurrentIndex: 0,
+    initAbcOrder(area) {
+        this.gameRound = 0;
+        this.gameScore = 0;
+        this.updateScoreDisplay();
+        this._aoNextRound(area);
+    },
+
+    _aoNextRound(area) {
+        if (this.gameRound >= 5) {
+            this._showGameComplete(area);
+            return;
+        }
+        this.gameRound++;
+
+        // Pilih 5 huruf berturutan secara rawak
+        const startIdx = Math.floor(Math.random() * 22);
+        this._aoLetters = abcData.slice(startIdx, startIdx + 5).map(d => d.letter);
+        this._aoAnswer = [];
+        this._aoCurrentIndex = 0;
+
+        const shuffled = [...this._aoLetters].sort(() => Math.random() - 0.5);
+
+        area.innerHTML = `
+            <div class="mg-status-text">${currentLanguage === 'ms' ? 'Pusingan' : 'Round'} ${this.gameRound}/5 — ${currentLanguage === 'ms' ? 'Susun mengikut urutan!' : 'Arrange in order!'}</div>
+            <div class="ao-answer-slots">
+                ${this._aoLetters.map(() => `<div class="ao-slot"></div>`).join('')}
+            </div>
+            <div class="ao-choices" id="aoChoices">
+                ${shuffled.map(l => `<button class="ao-choice-btn" onclick="MiniGameManager._aoPickLetter(this, '${l}')">${l}</button>`).join('')}
+            </div>
+            ${this.getGameDescriptionHtml('abcOrder')}
+        `;
+    },
+
+    _aoPickLetter(btn, letter) {
+        const expected = this._aoLetters[this._aoCurrentIndex];
+        if (letter === expected) {
+            btn.classList.add('used');
+            const slots = document.querySelectorAll('.ao-slot');
+            slots[this._aoCurrentIndex].textContent = letter;
+            slots[this._aoCurrentIndex].classList.add('filled');
+            this._aoCurrentIndex++;
+            playSynthSound('success');
+            playLetterSound(letter, currentLanguage);
+
+            if (this._aoCurrentIndex === this._aoLetters.length) {
+                this.gameScore += 20;
+                this.updateScoreDisplay();
+                AchievementManager.awardQuizXP('abc');
+                triggerGlobalConfettiEffect();
+                setTimeout(() => this._aoNextRound(document.getElementById('miniGameArea')), 1200);
+            }
+        } else {
+            btn.style.animation = 'shake 0.5s ease';
+            playSynthSound('error');
+            setTimeout(() => btn.style.animation = '', 500);
+        }
+    },
+
+    // ---- GAME 5: Listen & Choose ----
+    _lcCorrect: null,
+    initListenChoose(area) {
+        this.gameRound = 0;
+        this.gameScore = 0;
+        this.updateScoreDisplay();
+        this._lcNextRound(area);
+    },
+
+    _lcNextRound(area) {
+        if (this.gameRound >= this.maxRounds) {
+            this._showGameComplete(area);
+            return;
+        }
+        this.gameRound++;
+
+        // Pilih huruf betul dan 5 huruf rawak lain
+        const correctItem = abcData[Math.floor(Math.random() * abcData.length)];
+        this._lcCorrect = correctItem.letter;
+
+        let options = [correctItem.letter];
+        while (options.length < 6) {
+            const rand = abcData[Math.floor(Math.random() * abcData.length)].letter;
+            if (!options.includes(rand)) options.push(rand);
+        }
+        options = options.sort(() => Math.random() - 0.5);
+
+        area.innerHTML = `
+            <div class="mg-status-text">${currentLanguage === 'ms' ? 'Soalan' : 'Question'} ${this.gameRound}/${this.maxRounds}</div>
+            <button class="lc-speaker-btn" onclick="MiniGameManager._lcPlaySound()">🔊</button>
+            <div style="font-size:0.9rem; color:#888; text-align:center;">${currentLanguage === 'ms' ? 'Tekan 🔊 untuk dengar, kemudian pilih huruf!' : 'Press 🔊 to listen, then pick the letter!'}</div>
+            <div class="lc-grid">
+                ${options.map(opt => `<button class="lc-letter-btn" onclick="MiniGameManager._lcCheckAnswer(this, '${opt}')">${opt}</button>`).join('')}
+            </div>
+            ${this.getGameDescriptionHtml('listenChoose')}
+        `;
+
+        // Auto-play bunyi
+        setTimeout(() => this._lcPlaySound(), 500);
+    },
+
+    _lcPlaySound() {
+        playLetterSound(this._lcCorrect, currentLanguage);
+    },
+
+    _lcCheckAnswer(btn, chosen) {
+        const area = document.getElementById('miniGameArea');
+        const allBtns = area.querySelectorAll('.lc-letter-btn');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+        if (chosen === this._lcCorrect) {
+            btn.classList.add('correct');
+            this.gameScore += 20;
+            this.updateScoreDisplay();
+            playSynthSound('success');
+            AchievementManager.awardQuizXP('abc');
+        } else {
+            btn.classList.add('wrong');
+            allBtns.forEach(b => { if (b.textContent === this._lcCorrect) b.classList.add('correct'); });
+            playSynthSound('error');
+        }
+        setTimeout(() => this._lcNextRound(area), 1200);
+    },
+
+    // ---- GAME 6: Speed Challenge ----
+    _speedTimer: null,
+    _speedTimeLeft: 30,
+    _speedCorrect: 0,
+    _speedTotal: 0,
+    initSpeedChallenge(area) {
+        this.gameScore = 0;
+        this._speedCorrect = 0;
+        this._speedTotal = 0;
+        this._speedTimeLeft = 30;
+        if (this._speedTimer) { clearInterval(this._speedTimer); this._speedTimer = null; }
+        this.updateScoreDisplay();
+
+        area.innerHTML = `
+            <div class="sc-results">
+                <div style="font-size:4rem;">⏱️</div>
+                <div class="sc-results-label">${currentLanguage === 'ms' ? 'Sedia? Jawab secepat mungkin dalam 30 saat!' : 'Ready? Answer as fast as you can in 30 seconds!'}</div>
+                <button class="sa-play-btn" onclick="MiniGameManager._speedStart()">▶ ${currentLanguage === 'ms' ? 'Mula!' : 'Start!'}</button>
+            </div>
+            ${this.getGameDescriptionHtml('speedChallenge')}
+        `;
+    },
+
+    _speedStart() {
+        this._speedTimeLeft = 30;
+        this._speedCorrect = 0;
+        this._speedTotal = 0;
+        this.gameScore = 0;
+        this.updateScoreDisplay();
+        const area = document.getElementById('miniGameArea');
+        this._speedRenderQuestion(area);
+        this._speedTimer = setInterval(() => this._speedTick(), 100);
+    },
+
+    _speedTick() {
+        this._speedTimeLeft -= 0.1;
+        const bar = document.getElementById('scTimerBar');
+        if (bar) {
+            const pct = (this._speedTimeLeft / 30) * 100;
+            bar.style.width = pct + '%';
+            bar.className = 'sc-timer-bar';
+            if (pct < 30) bar.classList.add('danger');
+            else if (pct < 60) bar.classList.add('warning');
+        }
+        if (this._speedTimeLeft <= 0) {
+            clearInterval(this._speedTimer);
+            this._speedTimer = null;
+            this._speedShowResults();
+        }
+    },
+
+    _speedRenderQuestion(area) {
+        const correctItem = abcData[Math.floor(Math.random() * abcData.length)];
+        const lang = currentLanguage;
+        const correct = correctItem.letter;
+
+        // 4 pilihan: perkataan betul + 3 perkataan salah
+        let options = [{ letter: correct, word: correctItem[lang].word, emoji: correctItem[lang].emoji }];
+        while (options.length < 4) {
+            const rand = abcData[Math.floor(Math.random() * abcData.length)];
+            if (!options.find(o => o.letter === rand.letter)) {
+                options.push({ letter: rand.letter, word: rand[lang].word, emoji: rand[lang].emoji });
+            }
+        }
+        options = options.sort(() => Math.random() - 0.5);
+
+        area.innerHTML = `
+            <div class="sc-timer-bar-container"><div class="sc-timer-bar" id="scTimerBar" style="width:${(this._speedTimeLeft/30)*100}%"></div></div>
+            <div class="sc-score-display">✅ ${this._speedCorrect}  |  ⭐ ${this.gameScore} XP</div>
+            <div class="sc-letter-display">${correct}</div>
+            <div style="font-size:0.85rem; color:#888; text-align:center;">${currentLanguage === 'ms' ? 'Huruf ini untuk perkataan apa?' : 'Which word starts with this letter?'}</div>
+            <div class="sc-options-grid">
+                ${options.map(opt => `<button class="sc-option-btn" onclick="MiniGameManager._speedCheckAnswer(this, '${opt.letter}', '${correct}')">${opt.emoji} ${opt.word}</button>`).join('')}
+            </div>
+            ${this.getGameDescriptionHtml('speedChallenge')}
+        `;
+    },
+
+    _speedCheckAnswer(btn, chosen, correct) {
+        this._speedTotal++;
+        if (chosen === correct) {
+            this._speedCorrect++;
+            this.gameScore += 5;
+            this.updateScoreDisplay();
+            playSynthSound('success');
+            AchievementManager.awardQuizXP('abc');
+        } else {
+            playSynthSound('error');
+        }
+        this._speedRenderQuestion(document.getElementById('miniGameArea'));
+    },
+
+    _speedShowResults() {
+        const area = document.getElementById('miniGameArea');
+        triggerGlobalConfettiEffect();
+        playSynthSound('achievement');
+        area.innerHTML = `
+            <div class="sc-results">
+                <div style="font-size:4rem;">🏆</div>
+                <div class="sc-results-score">${this._speedCorrect}</div>
+                <div class="sc-results-label">${currentLanguage === 'ms' ? `Jawapan betul dari ${this._speedTotal} soalan!` : `Correct answers from ${this._speedTotal} questions!`}</div>
+                <div style="font-size:1rem; color:#888; margin-bottom:15px;">⭐ ${this.gameScore} XP</div>
+                <button class="mg-restart-btn" onclick="MiniGameManager.initGame('speedChallenge')">🔄 ${currentLanguage === 'ms' ? 'Cuba Lagi!' : 'Try Again!'}</button>
+                <br>
+                <button class="mg-next-btn" onclick="MiniGameManager.closeGame()" style="margin-top:10px;">🏠 ${currentLanguage === 'ms' ? 'Menu Permainan' : 'Games Menu'}</button>
+            </div>
+        `;
+    },
+
+    // ---- GAME 7: Connect the Dots ----
+    _cdDots: [],
+    _cdCurrentIdx: 0,
+    initConnectDots(area) {
+        this.showCdLevelSelection(area);
+    },
+
+    showCdLevelSelection(area) {
+        area.innerHTML = `
+            <div class="mg-status-text" style="margin-bottom: 20px;">${currentLanguage === 'ms' ? 'Pilih Tahap Sambung Titik' : 'Select Connect the Dots Level'}</div>
+            <div style="display: flex; flex-direction: column; gap: 15px; width: 100%; max-width: 300px; margin: 0 auto;">
+                <button class="sa-play-btn" style="background: linear-gradient(135deg, #00cec9, #0984e3); margin: 0;" onclick="MiniGameManager.startCdLevel(1)">⭐ ${currentLanguage === 'ms' ? 'Tahap 1: A → J' : 'Level 1: A → J'}</button>
+                <button class="sa-play-btn" style="background: linear-gradient(135deg, #fdcb6e, #e17055); margin: 0;" onclick="MiniGameManager.startCdLevel(2)">⭐ ${currentLanguage === 'ms' ? 'Tahap 2: K → P' : 'Level 2: K → P'}</button>
+                <button class="sa-play-btn" style="background: linear-gradient(135deg, #a29bfe, #6c5ce7); margin: 0;" onclick="MiniGameManager.startCdLevel(3)">⭐ ${currentLanguage === 'ms' ? 'Tahap 3: Q → Z' : 'Level 3: Q → Z'}</button>
+            </div>
+            ${this.getGameDescriptionHtml('connectDots')}
+        `;
+    },
+
+    startCdLevel(level) {
+        this._cdLevel = level;
+        this._cdCurrentIdx = 0;
+        this.gameScore = 0;
+        this.updateScoreDisplay();
+
+        const area = document.getElementById('miniGameArea');
+        
+        let startIdx = 0;
+        let endIdx = 10;
+        if (level === 2) {
+            startIdx = 10;
+            endIdx = 16;
+        } else if (level === 3) {
+            startIdx = 16;
+            endIdx = 26;
+        }
+
+        const letters = abcData.slice(startIdx, endIdx);
+        const numDots = letters.length;
+        
+        // Posisi rawak
+        const positions = [];
+        const margin = 15;
+        for (let i = 0; i < numDots; i++) {
+            let x, y, tooClose, attempts = 0;
+            do {
+                x = margin + Math.random() * (100 - 2 * margin);
+                y = margin + Math.random() * (100 - 2 * margin);
+                tooClose = positions.some(p => Math.hypot(p.x - x, p.y - y) < 14);
+                attempts++;
+            } while (tooClose && attempts < 50);
+            positions.push({ x, y });
+        }
+        this._cdDots = positions;
+
+        const startLetter = letters[0].letter;
+        const endLetter = letters[numDots - 1].letter;
+        const instruction = currentLanguage === 'ms' 
+            ? `Klik titik mengikut urutan ${startLetter} → ${endLetter}!` 
+            : `Click dots in order ${startLetter} → ${endLetter}!`;
+
+        area.innerHTML = `
+            <div class="mg-status-text">${currentLanguage === 'ms' ? 'Tahap' : 'Level'} ${level}</div>
+            <div class="cd-instruction">${instruction}</div>
+            <div class="cd-canvas-container" id="cdContainer">
+                <svg class="cd-canvas" id="cdSvg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet"></svg>
+                ${positions.map((pos, i) => `<div class="cd-dot ${i === 0 ? 'next' : ''}" id="cdDot${i}" style="left:calc(${pos.x}% - 22px); top:calc(${pos.y}% - 22px);" onclick="MiniGameManager._cdClickDot(${i})">${letters[i].letter}</div>`).join('')}
+            </div>
+            ${this.getGameDescriptionHtml('connectDots')}
+        `;
+    },
+
+    _cdClickDot(idx) {
+        if (idx !== this._cdCurrentIdx) {
+            playSynthSound('error');
+            const dot = document.getElementById(`cdDot${idx}`);
+            if (dot) dot.style.animation = 'shake 0.5s ease';
+            setTimeout(() => { if (dot) dot.style.animation = ''; }, 500);
+            return;
+        }
+
+        const dot = document.getElementById(`cdDot${idx}`);
+        dot.classList.remove('next');
+        dot.classList.add('connected');
+        playSynthSound('success');
+
+        // Sebut huruf
+        let startIdx = 0;
+        if (this._cdLevel === 2) startIdx = 10;
+        else if (this._cdLevel === 3) startIdx = 16;
+        playLetterSound(abcData[startIdx + idx].letter, currentLanguage);
+
+        // Lukis garisan dari titik sebelum ke titik ini
+        if (idx > 0) {
+            const svg = document.getElementById('cdSvg');
+            const prevPos = this._cdDots[idx - 1];
+            const currPos = this._cdDots[idx];
+            
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', prevPos.x);
+            line.setAttribute('y1', prevPos.y);
+            line.setAttribute('x2', currPos.x);
+            line.setAttribute('y2', currPos.y);
+            line.setAttribute('stroke', '#00cec9');
+            line.setAttribute('stroke-width', '1.5');
+            line.setAttribute('stroke-linecap', 'round');
+            svg.appendChild(line);
+        }
+
+        this._cdCurrentIdx++;
+
+        // Tanda titik seterusnya
+        const nextDot = document.getElementById(`cdDot${this._cdCurrentIdx}`);
+        if (nextDot) nextDot.classList.add('next');
+
+        // Semak jika siap
+        const maxDots = this._cdLevel === 2 ? 6 : 10;
+        if (this._cdCurrentIdx >= maxDots) {
+            this.gameScore += 25;
+            this.updateScoreDisplay();
+            AchievementManager.awardQuizXP('abc');
+            triggerGlobalConfettiEffect();
+            playSynthSound('achievement');
+
+            setTimeout(() => {
+                const area = document.getElementById('miniGameArea');
+                
+                let nextLevelBtn = '';
+                if (this._cdLevel < 3) {
+                    const nextLvl = this._cdLevel + 1;
+                    nextLevelBtn = `<button class="mg-next-btn" onclick="MiniGameManager.startCdLevel(${nextLvl})">➡️ ${currentLanguage === 'ms' ? 'Tahap Seterusnya' : 'Next Level'}</button><br>`;
+                }
+
+                area.innerHTML = `
+                    <div class="sc-results">
+                        <div style="font-size:4rem;">⭐</div>
+                        <div class="sc-results-score">${currentLanguage === 'ms' ? 'Tahniah!' : 'Well Done!'}</div>
+                        <div class="sc-results-label">${currentLanguage === 'ms' ? `Kamu berjaya sambung semua titik Tahap ${this._cdLevel}!` : `You connected all the dots for Level ${this._cdLevel}!`}</div>
+                        <div style="font-size:1rem; color:#888; margin-bottom:15px;">⭐ ${this.gameScore} XP</div>
+                        ${nextLevelBtn}
+                        <button class="mg-restart-btn" onclick="MiniGameManager.startCdLevel(${this._cdLevel})">🔄 ${currentLanguage === 'ms' ? 'Main Tahap Ini Lagi' : 'Play This Level Again'}</button>
+                        <br>
+                        <button class="mg-next-btn" style="background: linear-gradient(135deg, #a29bfe, #6c5ce7); margin-top:10px;" onclick="MiniGameManager.showCdLevelSelection(document.getElementById('miniGameArea'))">🗺️ ${currentLanguage === 'ms' ? 'Pilih Tahap Lain' : 'Select Other Level'}</button>
+                        <br>
+                        <button class="mg-next-btn" onclick="MiniGameManager.closeGame()" style="margin-top:10px;">🏠 ${currentLanguage === 'ms' ? 'Menu Permainan' : 'Games Menu'}</button>
+                    </div>
+                    ${this.getGameDescriptionHtml('connectDots')}
+                `;
+            }, 1500);
+        }
+    },
+
+    // ---- GAME 8: Upper-Lower Matching ----
+    _ulmSelected: null,
+    _ulmMatched: 0,
+    _ulmLetters: [],
+    _ulmRound: 0,
+    initUpperLowerMatch(area) {
+        this.gameScore = 0;
+        this._ulmSelected = null;
+        this._ulmMatched = 0;
+        this._ulmRound = 0;
+        this.updateScoreDisplay();
+        this._ulmNextRound(area);
+    },
+
+    _ulmNextRound(area) {
+        if (this._ulmRound >= 3) {
+            this._showGameComplete(area);
+            return;
+        }
+        this._ulmRound++;
+        this._ulmSelected = null;
+        this._ulmMatched = 0;
+
+        // Pilih 5 huruf rawak
+        const shuffledAbc = [...abcData].sort(() => Math.random() - 0.5);
+        this._ulmLetters = shuffledAbc.slice(0, 5).map(d => d.letter);
+        const shuffledLower = [...this._ulmLetters].sort(() => Math.random() - 0.5);
+
+        area.innerHTML = `
+            <div class="mg-status-text">${currentLanguage === 'ms' ? 'Pusingan' : 'Round'} ${this._ulmRound}/3 — ${currentLanguage === 'ms' ? 'Padankan huruf besar dengan kecil!' : 'Match uppercase with lowercase!'}</div>
+            <div class="ulm-section-label">${currentLanguage === 'ms' ? 'HURUF BESAR' : 'UPPERCASE'}</div>
+            <div class="ulm-row" id="ulmUpperRow">
+                ${this._ulmLetters.map(l => `<button class="ulm-letter-btn" data-letter="${l}" data-type="upper" onclick="MiniGameManager._ulmSelect(this)">${l}</button>`).join('')}
+            </div>
+            <div class="ulm-divider"></div>
+            <div class="ulm-section-label">${currentLanguage === 'ms' ? 'huruf kecil' : 'lowercase'}</div>
+            <div class="ulm-row" id="ulmLowerRow">
+                ${shuffledLower.map(l => `<button class="ulm-letter-btn" data-letter="${l}" data-type="lower" onclick="MiniGameManager._ulmSelect(this)">${l.toLowerCase()}</button>`).join('')}
+            </div>
+            ${this.getGameDescriptionHtml('upperLowerMatch')}
+        `;
+    },
+
+    _ulmSelect(btn) {
+        if (btn.classList.contains('matched')) return;
+
+        const type = btn.dataset.type;
+        const letter = btn.dataset.letter;
+
+        if (!this._ulmSelected) {
+            // Pilihan pertama
+            this._ulmSelected = { btn, type, letter };
+            btn.classList.add('selected');
+            playSynthSound('click');
+        } else {
+            // Pilihan kedua — mesti jenis berlainan
+            if (type === this._ulmSelected.type) {
+                // Tukar pilihan dalam jenis yang sama
+                this._ulmSelected.btn.classList.remove('selected');
+                this._ulmSelected = { btn, type, letter };
+                btn.classList.add('selected');
+                playSynthSound('click');
+                return;
+            }
+
+            // Semak padanan
+            if (letter === this._ulmSelected.letter) {
+                // Padan!
+                btn.classList.add('matched');
+                btn.classList.remove('selected');
+                this._ulmSelected.btn.classList.remove('selected');
+                this._ulmSelected.btn.classList.add('matched');
+                this._ulmMatched++;
+                this.gameScore += 20;
+                this.updateScoreDisplay();
+                playSynthSound('success');
+                AchievementManager.awardQuizXP('abc');
+                this._ulmSelected = null;
+
+                if (this._ulmMatched === 5) {
+                    triggerGlobalConfettiEffect();
+                    setTimeout(() => this._ulmNextRound(document.getElementById('miniGameArea')), 1200);
+                }
+            } else {
+                // Tidak padan
+                btn.classList.add('selected');
+                playSynthSound('error');
+                const prevBtn = this._ulmSelected.btn;
+                setTimeout(() => {
+                    btn.classList.remove('selected');
+                    prevBtn.classList.remove('selected');
+                }, 600);
+                this._ulmSelected = null;
+            }
+        }
+    },
+
+    // ---- Paparan Tamat Permainan ----
+    _showGameComplete(area) {
+        triggerGlobalConfettiEffect();
+        playSynthSound('achievement');
+        area.innerHTML = `
+            <div class="sc-results">
+                <div style="font-size:4rem;">🎉</div>
+                <div class="sc-results-score">${currentLanguage === 'ms' ? 'Tahniah!' : 'Great Job!'}</div>
+                <div class="sc-results-label">${currentLanguage === 'ms' ? 'Kamu telah menyelesaikan permainan ini!' : 'You have completed this game!'}</div>
+                <div style="font-size:1.5rem; color:var(--color-accent-primary); margin-bottom:15px;">⭐ ${this.gameScore} XP</div>
+                <button class="mg-restart-btn" onclick="MiniGameManager.initGame(MiniGameManager.currentGame)">🔄 ${currentLanguage === 'ms' ? 'Main Lagi!' : 'Play Again!'}</button>
+                <br>
+                <button class="mg-next-btn" onclick="MiniGameManager.closeGame()" style="margin-top:10px;">🏠 ${currentLanguage === 'ms' ? 'Menu Permainan' : 'Games Menu'}</button>
+            </div>
+        `;
+    }
+};
 

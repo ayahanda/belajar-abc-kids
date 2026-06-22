@@ -25,7 +25,8 @@
         <div id="screenMainMenu" class="app-screen">
             <!-- Header Utama (Hanya ada di Screen 1) -->
             <header class="app-header">
-                <div class="header-content">
+                <!-- Baris Atas: Logo & Tetapan Sistem -->
+                <div class="header-top">
                     <div class="title-logo">
                         <span class="logo-emoji">🎨</span>
                         <h1 id="appHeaderTitle">Belajar <span class="colored-text">A</span><span class="colored-text">B</span><span class="colored-text">C</span></h1>
@@ -43,6 +44,20 @@
                             <span class="icon-emoji" id="muteIcon">🔊</span>
                         </button>
                     </div>
+                </div>
+                
+                <!-- Baris Bawah: Widget Profil & Butang Pencapaian -->
+                <div class="header-bottom" id="headerBottomRow" style="display: none;">
+                    <!-- Widget Profil Anak -->
+                    <div id="headerProfileWidget" class="profile-widget" onclick="openAchievementModal()">
+                        <span id="headerAvatar" class="profile-widget-avatar">👦</span>
+                        <span id="headerName" class="profile-widget-name">Anak</span>
+                    </div>
+
+                    <!-- Butang Pencapaian -->
+                    <button id="btnAchievements" class="achievement-btn" onclick="openAchievementModal()" title="Lihat Pencapaian">
+                        🏆 <span data-ms="Pencapaian" data-en="Achievements">Pencapaian</span>
+                    </button>
                 </div>
             </header>
 
@@ -68,6 +83,12 @@
                         <span class="menu-card-icon">✍️</span>
                         <span class="menu-card-title" data-ms="Melukis" data-en="Drawing">Melukis</span>
                         <span class="menu-card-desc" data-ms="Lakar huruf & nombor mengikut panduan" data-en="Trace letters & numbers with guidelines">Lakar huruf & nombor mengikut panduan</span>
+                    </button>
+                    <!-- Permainan Khas -->
+                    <button class="menu-card card-games" onclick="openGamesMenu()">
+                        <span class="menu-card-icon">🎯</span>
+                        <span class="menu-card-title" data-ms="Permainan Khas" data-en="Special Games">Permainan Khas</span>
+                        <span class="menu-card-desc" data-ms="8 permainan seru untuk hafal ABC!" data-en="8 fun games to memorize ABC!">8 permainan seru untuk hafal ABC!</span>
                     </button>
                 </div>
                 
@@ -267,9 +288,14 @@
                                     <input type="range" id="brushSize" min="10" max="40" value="20" onchange="updateBrushSize(this.value)">
                                 </div>
 
-                                <button class="clear-btn" onclick="clearCanvas()">
-                                    <span data-ms="Padam Semua" data-en="Clear All">Padam Semua</span> 🧹
-                                </button>
+                                <div class="trace-action-buttons">
+                                    <button class="clear-btn" onclick="clearCanvas()">
+                                        <span data-ms="Padam Semua" data-en="Clear All">Padam Semua</span> 🧹
+                                    </button>
+                                    <button class="done-trace-btn" onclick="completeTracing()">
+                                        <span data-ms="Selesai! 🌟" data-en="Done! 🌟">Selesai! 🌟</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -282,6 +308,74 @@
                     </div>
                 </section>
 
+            </main>
+        </div>
+
+        <!-- SCREEN 4: PEMILIH PERMAINAN KHAS -->
+        <div id="screenGamesMenu" class="app-screen" style="display: none;">
+            <header class="app-header sub-header">
+                <div class="header-content">
+                    <button class="nav-back-btn" onclick="goHome()" title="Kembali ke Menu Utama">🏠 Home</button>
+                    <h2 class="sub-header-title" data-ms="Permainan Khas" data-en="Special Games">Permainan Khas</h2>
+                    <div style="width: 70px;"></div>
+                </div>
+            </header>
+
+            <main class="menu-main">
+                <div class="menu-instructions">
+                    <p data-ms="Pilih permainan yang menyeronokkan!" data-en="Choose a fun game!">Pilih permainan yang menyeronokkan!</p>
+                </div>
+                <div class="games-grid">
+                    <button class="game-select-card game-card-1" onclick="MiniGameManager.openGame('firstLetter')">
+                        <span class="game-select-icon">🖼️</span>
+                        <span class="game-select-title" data-ms="Huruf Pertama" data-en="First Letter">Huruf Pertama</span>
+                    </button>
+                    <button class="game-select-card game-card-2" onclick="MiniGameManager.openGame('memoryMatch')">
+                        <span class="game-select-icon">🃏</span>
+                        <span class="game-select-title" data-ms="Memori Match" data-en="Memory Match">Memori Match</span>
+                    </button>
+                    <button class="game-select-card game-card-3" onclick="MiniGameManager.openGame('singAlong')">
+                        <span class="game-select-icon">🎵</span>
+                        <span class="game-select-title" data-ms="Nyanyi ABC" data-en="Sing ABC">Nyanyi ABC</span>
+                    </button>
+                    <button class="game-select-card game-card-4" onclick="MiniGameManager.openGame('abcOrder')">
+                        <span class="game-select-icon">🔤</span>
+                        <span class="game-select-title" data-ms="Susun Urutan" data-en="ABC Order">Susun Urutan</span>
+                    </button>
+                    <button class="game-select-card game-card-5" onclick="MiniGameManager.openGame('listenChoose')">
+                        <span class="game-select-icon">👂</span>
+                        <span class="game-select-title" data-ms="Dengar & Pilih" data-en="Listen & Choose">Dengar & Pilih</span>
+                    </button>
+                    <button class="game-select-card game-card-6" onclick="MiniGameManager.openGame('speedChallenge')">
+                        <span class="game-select-icon">⏱️</span>
+                        <span class="game-select-title" data-ms="Cabaran Masa" data-en="Speed Challenge">Cabaran Masa</span>
+                    </button>
+                    <button class="game-select-card game-card-7" onclick="MiniGameManager.openGame('connectDots')">
+                        <span class="game-select-icon">🔗</span>
+                        <span class="game-select-title" data-ms="Sambung Titik" data-en="Connect Dots">Sambung Titik</span>
+                    </button>
+                    <button class="game-select-card game-card-8" onclick="MiniGameManager.openGame('upperLowerMatch')">
+                        <span class="game-select-icon">🧩</span>
+                        <span class="game-select-title" data-ms="Padanan Huruf" data-en="Letter Matching">Padanan Huruf</span>
+                    </button>
+                </div>
+            </main>
+        </div>
+
+        <!-- SCREEN 5: KAWASAN MINI GAME -->
+        <div id="screenMiniGame" class="app-screen" style="display: none;">
+            <header class="app-header sub-header">
+                <div class="header-content">
+                    <button class="nav-back-btn" onclick="MiniGameManager.closeGame()" title="Kembali ke Permainan">⬅ Back</button>
+                    <h2 class="sub-header-title" id="miniGameTitle">Permainan</h2>
+                    <div class="mini-game-score" id="miniGameScoreDisplay"></div>
+                </div>
+            </header>
+
+            <main class="mini-game-main">
+                <div id="miniGameArea" class="mini-game-area">
+                    <!-- Game content will be dynamically injected here -->
+                </div>
             </main>
         </div>
 
@@ -311,6 +405,152 @@
                     <span id="txtSpeakAll" data-ms="Sebut Semua" data-en="Say All">Sebut Semua</span>
                 </button>
                 <button class="nav-arrow" onclick="navigateLetter(1)">➡</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL PROFIL ANAK (DAFTAR / EDIT) ================= -->
+    <div class="modal-overlay" id="profileModal" style="display: none;">
+        <div class="modal-card">
+            <button class="close-overlay" id="closeProfileBtn" onclick="closeProfileModal()" style="display: none;">✖</button>
+            <h2 id="profileModalTitle" data-ms="Cipta Profil Anak 🚀" data-en="Create Kid Profile 🚀">Cipta Profil Anak 🚀</h2>
+            <p class="profile-subtitle" data-ms="Sila masukkan maklumat anak untuk mula belajar!" data-en="Please enter details to start learning!">Sila masukkan maklumat anak untuk mula belajar!</p>
+            
+            <div class="profile-form">
+                <div class="form-group">
+                    <label for="profileNameInput" data-ms="Nama Anak:" data-en="Kid's Name:">Nama Anak:</label>
+                    <input type="text" id="profileNameInput" placeholder="Contoh: Ahmad" maxlength="12" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="profileAgeSelect" data-ms="Umur (Tahun):" data-en="Age (Years):">Umur (Tahun):</label>
+                    <select id="profileAgeSelect">
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5" selected>5</option>
+                        <option value="6">6</option>
+                        <option value="7">7+</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-ms="Jantina Anak:" data-en="Kid's Gender:">Jantina Anak:</label>
+                    <div class="gender-selection">
+                        <button type="button" id="btnGenderBoy" class="gender-btn active" onclick="setProfileGender('boy')">👦 <span data-ms="Lelaki" data-en="Boy">Lelaki</span></button>
+                        <button type="button" id="btnGenderGirl" class="gender-btn" onclick="setProfileGender('girl')">👧 <span data-ms="Perempuan" data-en="Girl">Perempuan</span></button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-ms="Pilih Avatar Kartun:" data-en="Select Cartoon Avatar:">Pilih Avatar Kartun:</label>
+                    <div class="avatar-grid" id="avatarGridContainer">
+                        <!-- Dijana secara dinamik melalui JS -->
+                    </div>
+                </div>
+
+                <button id="btnSaveProfile" class="save-profile-btn" onclick="saveProfileData()" data-ms="Mula Belajar! 🚀" data-en="Start Learning! 🚀">Mula Belajar! 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL DASHBOARD PENCAPAIAN ================= -->
+    <div class="modal-overlay" id="achievementModal" style="display: none;" onclick="closeAchievementModal(event)">
+        <div class="modal-card achievement-card" onclick="event.stopPropagation()">
+            <button class="close-overlay" onclick="closeAchievementModal(null)">✖</button>
+            
+            <h2 class="achieve-title">🏆 <span data-ms="Pencapaian & Kemajuan" data-en="Achievements & Progress">Pencapaian & Kemajuan</span></h2>
+            
+            <!-- Ringkasan Profil -->
+            <div class="achievement-profile-summary">
+                <span id="achieveAvatar" class="achieve-avatar-large">👦</span>
+                <div class="achieve-profile-text">
+                    <h3 id="achieveName">Nama</h3>
+                    <p><span id="achieveAge">5</span> <span data-ms="Tahun" data-en="Years Old">Tahun</span></p>
+                </div>
+                <button class="edit-profile-btn" onclick="openProfileModal(true)">
+                    ✏️ <span data-ms="Edit Profil" data-en="Edit Profile">Edit Profil</span>
+                </button>
+            </div>
+
+            <!-- Jumlah Markah/Bintang -->
+            <div class="achievement-total-points">
+                <span class="star-icon">⭐</span>
+                <div class="points-text">
+                    <span class="points-label" data-ms="Jumlah Bintang Terkumpul" data-en="Total Stars Earned">Jumlah Bintang Terkumpul</span>
+                    <h2><span id="achieveTotalPoints">0</span> XP</h2>
+                </div>
+            </div>
+
+            <!-- Bar Kemajuan Kemahiran -->
+            <div class="achievement-skills-progress">
+                <h4 class="section-sub-title" data-ms="Kemajuan Kemahiran" data-en="Skills Progress">Kemajuan Kemahiran</h4>
+                
+                <div class="skill-progress-item">
+                    <span class="skill-label">📚 ABC:</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar bar-abc" id="pbAbc" style="width: 0%;"></div>
+                    </div>
+                    <span class="skill-score-text" id="scoreAbcText">0 XP</span>
+                </div>
+                
+                <div class="skill-progress-item">
+                    <span class="skill-label">🔢 123:</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar bar-num" id="pbNum" style="width: 0%;"></div>
+                    </div>
+                    <span class="skill-score-text" id="scoreNumText">0 XP</span>
+                </div>
+                
+                <div class="skill-progress-item">
+                    <span class="skill-label">🗣️ Suku Kata:</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar bar-syllable" id="pbSyllable" style="width: 0%;"></div>
+                    </div>
+                    <span class="skill-score-text" id="scoreSyllableText">0 XP</span>
+                </div>
+                
+                <div class="skill-progress-item">
+                    <span class="skill-label">🕌 Jawi:</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar bar-jawi" id="pbJawi" style="width: 0%;"></div>
+                    </div>
+                    <span class="skill-score-text" id="scoreJawiText">0 XP</span>
+                </div>
+                
+                <div class="skill-progress-item">
+                    <span class="skill-label">✏️ Melakar:</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar bar-trace" id="pbTrace" style="width: 0%;"></div>
+                    </div>
+                    <span class="skill-score-text" id="scoreTraceText">0 XP</span>
+                </div>
+            </div>
+
+            <!-- Grid Lencana Pencapaian -->
+            <div class="achievement-badges-section">
+                <h4 class="section-sub-title" data-ms="Lencana Pencapaian" data-en="Achievement Badges">Lencana Pencapaian</h4>
+                <div class="badges-grid" id="badgesGridContainer">
+                    <!-- Dijana secara dinamik melalui JS -->
+                </div>
+            </div>
+
+            <!-- Pintu Ibu Bapa (Parental Gate) untuk Reset -->
+            <div class="parental-gate-section">
+                <button class="danger-reset-btn" onclick="showParentalGate()">
+                    ⚠️ <span data-ms="Padam Semua Rekod & Profil" data-en="Reset All Records & Profile">Padam Rekod & Profil</span>
+                </button>
+                <div id="parentalGateContainer" class="parental-gate-box" style="display: none;">
+                    <p class="gate-warning-desc" data-ms="Sila jawab soalan matematik di bawah untuk meneruskan pemadaman rekod (Ibu Bapa sahaja):" data-en="Please solve the math question below to delete records (Parents only):">Sila jawab soalan matematik di bawah untuk meneruskan pemadaman rekod (Ibu Bapa sahaja):</p>
+                    <div class="gate-math-row">
+                        <strong id="parentalGateQuestion">4 + 5 = ?</strong>
+                        <input type="number" id="parentalGateAnswer" placeholder="?">
+                    </div>
+                    <div class="gate-buttons">
+                        <button class="gate-btn-confirm" onclick="verifyParentalGateAnswer()" data-ms="Sahkan Padam" data-en="Confirm Delete">Padam</button>
+                        <button class="gate-btn-cancel" onclick="hideParentalGate()" data-ms="Batal" data-en="Cancel">Batal</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
