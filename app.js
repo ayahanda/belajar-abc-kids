@@ -2662,6 +2662,13 @@ const AchievementManager = {
 };
 
 // 3. FUNGSI CALLBACK GLOBAL & WINDOW LISTENER
+function openProfileModal(isEdit) {
+    playSynthSound('click');
+    document.getElementById('achievementModal').style.display = 'none';
+    ProfileManager.openProfileModal(isEdit);
+}
+window.openProfileModal = openProfileModal;
+
 function setProfileGender(gender) {
     ProfileManager.setGender(gender);
 }
